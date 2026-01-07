@@ -6,12 +6,11 @@ from app.core.token_jwt import create_access_token
 from app.db.db import sessionDep
 from app.core.token_jwt import decode_token
 from app.models.user import User
-#from app.schemas.user import UserLogin
 from app.core.hashing import verify_password
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 
@@ -25,7 +24,7 @@ def autenticate_user(username:str, password:str,db: Session):
     return user
 
 #dependences
-
+'''
 def get_current_user(   db: sessionDep,
     token: str = Depends(oauth2_scheme)) -> User:
     payload = decode_token(token)
@@ -45,7 +44,7 @@ def check_admin(user:User=Depends(get_current_user)):
     if not user.admin:
         raise  HTTPException(status_code=403, detail="insufficient permissions") 
     return user
-
+'''
 
 
 @router.post("/token",response_model=Token)
@@ -54,8 +53,12 @@ async def login(db: sessionDep,form_data: OAuth2PasswordRequestForm = Depends() 
     if not user:
         raise HTTPException(status_code=401, detail="invalidated credentials")
     access_token=create_access_token(data={"sub":user.username})
-    return {"access_token":access_token,"token_type":"bearer"}
-
+    return {
+        "access_token":access_token,
+        "token_type":"bearer"
+        }
+'''
 @router.get("/admin/")
 async def admin_router(current_user: User=Depends(check_admin)):
     return{"msg":f"HI {current_user.full_name}, welcome panel admin"}  
+'''

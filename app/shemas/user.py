@@ -1,15 +1,16 @@
 from pydantic import BaseModel,EmailStr
 from sqlmodel import SQLModel,Field
+from typing import Optional
 
 class User_base(SQLModel):
     username:str
-    email:EmailStr
+    email:Optional[EmailStr] = None
     full_name:str
-    role:bool
+    admin:bool
     disable:bool
 
 class User_create (User_base):  
-    password:str 
+    hashed_password:str
 
 class User_update (User_base):  
     pass 

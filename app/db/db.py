@@ -9,8 +9,11 @@ from app.core.hashing import hash_password
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-sqlite_path = BASE_DIR / "db.sqlite3"
+sqlite_path = BASE_DIR / "db" / "db.sqlite3"
 sqlite_url = f"sqlite:///{sqlite_path}"
+
+#print("📂 SQLITE PATH REAL:", sqlite_path)
+#print("📂 EXISTE?:", sqlite_path.exists())
 
 #engine = create_engine(sqlite_url, echo=True)
 engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
