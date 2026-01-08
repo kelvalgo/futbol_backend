@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.db.db import sessionDep
 from app.core.token_jwt import decode_token
 from app.models.user import User
@@ -8,7 +8,8 @@ from app.models.user import User
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def get_user(username:str,db: Session):
-    return db.query(User).filter(User.username == username).first()
+    statement = select(User).where(User.username == username)
+    return db.exec(statement).first()
 
 def get_current_user(   db: sessionDep,
     token: str = Depends(oauth2_scheme)) -> User:

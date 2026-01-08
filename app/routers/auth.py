@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.shemas.token import Token
 from app.core.token_jwt import create_access_token
 from app.db.db import sessionDep
@@ -15,7 +15,8 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 def get_user(username:str,db: Session):
-    return db.query(User).filter(User.username == username).first()
+    statement = select(User).where(User.username == username)
+    return db.exec(statement).first()
 
 def autenticate_user(username:str, password:str,db: Session):
     user = get_user(username,db)
