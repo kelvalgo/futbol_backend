@@ -8,10 +8,10 @@ if TYPE_CHECKING:
     from app.models.game import Game
 
 class User_base(SQLModel):
-    username:str
+    username:str = Field(index=True, unique=True)
     email:Optional[EmailStr] = None
     full_name:str
-    admin:bool
+    admin:bool=Field(default=False)
     disable:bool
 
     '''
@@ -28,8 +28,8 @@ class User_base(SQLModel):
         '''
 
 
-class User_create (User_base):  
-    pass 
+class User_create (User_base):      
+    pass
 
 class User_update (User_base):  
     pass 
@@ -38,5 +38,9 @@ class User_update (User_base):
 class User(User_base,table=True):
     id:int|None=Field(default=None,primary_key=True)
     hashed_password:str
-    skill: Optional["Skill"] = Relationship(back_populates="user")
-    games: Optional["Game"] = Relationship(back_populates="user")
+    skill: Optional["Skill"] = Relationship(back_populates="user",
+                                            sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    games: Optional["Game"] = Relationship(back_populates="user",
+                                           sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+
+   

@@ -22,6 +22,11 @@ def get_current_user(   db: sessionDep,
     user = get_user(username,db)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    if  user.disable:   # active == 0 o False
+        raise HTTPException(
+        status_code=403,
+        detail="User inactive"
+        )
 
     return user
 

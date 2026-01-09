@@ -3,12 +3,14 @@ from app.models.skill import  Skill,Skill_create,Skill_update
 from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security import get_current_user, check_admin
-from app.models.user import User,User_create
-from app.shemas.user import User_read
+from app.models.user import User
+from app.shemas.user import User_read, User_update,User_create
 from app.core.hashing import hash_password
 
 
 router=APIRouter(prefix="/admin", tags=["Admin"])
+
+'''
 # 🔓 Solo usuarios autenticados
 @router.get("/",response_model=list[User])
 async def list_user(
@@ -16,20 +18,124 @@ async def list_user(
     current_user: User = Depends(get_current_user)
 ):
     return session.exec(select(User)).all()
-
+'''
 
 # 🔐 Solo ADMIN
-@router.get("/",response_model=list[User_read])
-async def list_players_admin(
+@router.get("/user",response_model=list[User_read])
+async def list_user(
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):
     return session.exec(select(User)).all()
 
-@router.post("/",response_model=User_read)
+@router.post("/user",response_model=User_read)
 async def create_user(
     session: sessionDep,
     user_in:User_create,
+    current_user: User = Depends(check_admin)
+    ):
+
+    template= select(User).where(user_in.username==User.username)
+    user=session.exec(template).first()
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Username already exists"
+        )
+
+    user_new = User(**user_in.model_dump())
+    user_new.hashed_password = hash_password("Inicio")
+
+    session.add(user_new)
+    session.commit()
+    session.refresh(user_new)
+    return user_new
+
+@router.delete("/user/{user_id}",response_model=User_read,
+               status_code=status.HTTP_200_OK)
+async def delete_user(
+    user_id:str,
+    session:sessionDep,
+    current:User=Depends(check_admin)
+    ):
+    user=session.exec(select(User).where(User.id==user_id)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    session.delete(user)
+    session.commit()
+    return user
+
+@router.put("/user",
+    response_model=User_read,
+    status_code=status.HTTP_200_OK
+)
+def update_user_put(
+    user_in: User_update,
+    session:sessionDep,
+    current_user: User = Depends(check_admin)
+    ):
+    user = session.get(User, user_in.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    for field, value in user_in.model_dump().items():
+        setattr(user, field, value)
+
+    session.commit()
+    session.refresh(user)
+    return user
+
+@router.patch("/user",
+    response_model=User_read,
+    status_code=status.HTTP_200_OK
+)
+def update_user_patch(
+    user_in: User_update,
+    session: sessionDep,
+    current_user: User = Depends(check_admin)
+):
+    user = session.get(User, user_in.id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    data = user_in.model_dump(exclude_unset=True)
+
+    if not data:
+        raise HTTPException(
+            status_code=400,
+            detail="No fields provided for update"
+        )
+
+    for field, value in data.items():
+        setattr(user, field, value)
+
+    session.commit()
+    session.refresh(user)
+    return user
+
+
+@router.put("/user/user_id/{id}/pass/{new_password}",
+            response_model=User_read,
+            status_code=status.HTTP_200_OK)
+async def new_password(
+    id:int,
+    new_pass:str,
+    session: sessionDep,
+    current_user: User = Depends(get_current_user)
+):
+  user= session.get(User,id)
+  new_hash=hash_password(new_pass)
+  user.hashed_password=new_hash
+  session.commit()
+  session.refresh(user)
+  return user
+
+
+'''
+@router.post("/skill",response_model=User_read)
+async def create_user(
+    session: sessionDep,
+    user_in:User_base,
     current_user: User = Depends(check_admin)
     ):
     user_new = User(**user_in.model_dump())
@@ -39,3 +145,5 @@ async def create_user(
     session.commit()
     session.refresh(user_new)
     return user_new
+
+    '''

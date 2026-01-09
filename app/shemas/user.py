@@ -3,17 +3,18 @@ from sqlmodel import SQLModel,Field
 from typing import Optional
 
 class User_base(SQLModel):
-    username:str
+    username:str = None
     email:Optional[EmailStr] = None
-    full_name:str
-    admin:bool
-    disable:bool
+    full_name:str = None
+    admin:bool = None
+    disable:bool = None
 
 class User_create (User_base):  
-    hashed_password:str
+    pass
+
 
 class User_update (User_base):  
-    pass 
+    pass
 
 class User_read(User_base):
     id:int
