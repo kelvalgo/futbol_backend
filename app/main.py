@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from .db.db import lifespan
-from .routers import admin,auth,user_router
+from .routers.admin import router as admin_router
+from .routers import auth#,user_router
+from .routers.users import router as users_router
 
-app = FastAPI(lifespan=lifespan)
-app.include_router(admin.router)
+app = FastAPI(lifespan=lifespan) 
 app.include_router(auth.router)
-app.include_router(user_router.router)
+app.include_router(admin_router)
+app.include_router(users_router)
 
 
 

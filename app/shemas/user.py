@@ -1,8 +1,7 @@
 from pydantic import BaseModel,EmailStr
-from sqlmodel import SQLModel,Field
 from typing import Optional
 
-class User_base(SQLModel):
+class User_base(BaseModel):
     username:str = None
     email:Optional[EmailStr] = None
     full_name:str = None
@@ -14,7 +13,7 @@ class User_create (User_base):
 
 
 class User_update (User_base):  
-    pass
+    id:int
 
 class User_read(User_base):
     id:int

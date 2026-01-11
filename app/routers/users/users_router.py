@@ -1,9 +1,9 @@
 from fastapi import APIRouter,Depends,HTTPException,status
-from app.models.skill import  Skill,Skill_create,Skill_update
+from app.models.skill import  Skill
 from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security import get_current_user, check_admin
-from app.models.user import User, User_base,User_create
+from app.models.user import User
 from app.shemas.user import User_read, User_update
 from app.core.hashing import hash_password
 

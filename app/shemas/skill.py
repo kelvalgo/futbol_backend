@@ -1,21 +1,23 @@
-from pydantic import BaseModel,EmailStr
-from sqlmodel import SQLModel,Field,Relationship
-from typing import Optional,TYPE_CHECKING
+from typing import Optional
+from pydantic import BaseModel,Field
+from app.core.enum.position_enum import PositionEnum
 
-class Skill_base(SQLModel):
-    position:str
-    spatial_condition:bool
-    gk : float
-    df : float 
-    mf : float
-    wf : float
+
+class Skill_base(BaseModel):
+    position:PositionEnum = Field(default=None)
+    spatial_condition:bool = None
+    gk : Optional[float]=Field(default=None,ge=0, le=5)
+    df : Optional[float]=Field(default=None,ge=0, le=5)
+    mf : Optional[float]=Field(default=None,ge=0, le=5)
+    wf : Optional[float]=Field(default=None,ge=0, le=5)
 
 class Skill_create (Skill_base):  
-    pass 
+    user_id: int 
 
 class Skill_update (Skill_base):  
-    pass 
+    id:int 
 
-class Skill(Skill_base,table=True):
+class Skill_read(Skill_base):
     id:int
-    user_id: int
+    user_id: int = None
+    

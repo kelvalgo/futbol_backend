@@ -1,14 +1,15 @@
 from fastapi import APIRouter,Depends,HTTPException,status
-from app.models.skill import  Skill,Skill_create,Skill_update
 from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security import get_current_user, check_admin
 from app.models.user import User
+from app.models.skill import Skill
 from app.shemas.user import User_read, User_update,User_create
+from app.shemas.skill import Skill_read,Skill_create,Skill_update
 from app.core.hashing import hash_password
 
 
-router=APIRouter(prefix="/admin", tags=["Admin"])
+router=APIRouter(prefix="/admin/user", tags=["Admin - User"])
 
 '''
 # 🔓 Solo usuarios autenticados
@@ -20,15 +21,17 @@ async def list_user(
     return session.exec(select(User)).all()
 '''
 
-# 🔐 Solo ADMIN
-@router.get("/user",response_model=list[User_read])
+#User
+@router.get("/",response_model=list[User_read],
+               status_code=status.HTTP_200_OK)
 async def list_user(
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):
     return session.exec(select(User)).all()
 
-@router.post("/user",response_model=User_read)
+@router.post("/",response_model=User_read,
+               status_code=status.HTTP_201_CREATED)
 async def create_user(
     session: sessionDep,
     user_in:User_create,
@@ -51,10 +54,10 @@ async def create_user(
     session.refresh(user_new)
     return user_new
 
-@router.delete("/user/{user_id}",response_model=User_read,
+@router.delete("/{user_id}",response_model=User_read,
                status_code=status.HTTP_200_OK)
 async def delete_user(
-    user_id:str,
+    user_id:int,
     session:sessionDep,
     current:User=Depends(check_admin)
     ):
@@ -65,7 +68,7 @@ async def delete_user(
     session.commit()
     return user
 
-@router.put("/user",
+@router.put("/",
     response_model=User_read,
     status_code=status.HTTP_200_OK
 )
@@ -85,7 +88,7 @@ def update_user_put(
     session.refresh(user)
     return user
 
-@router.patch("/user",
+@router.patch("/",
     response_model=User_read,
     status_code=status.HTTP_200_OK
 )
@@ -114,10 +117,10 @@ def update_user_patch(
     return user
 
 
-@router.put("/user/user_id/{id}/pass/{new_password}",
+@router.put("/user_id/{id}/pass/{new_password}",
             response_model=User_read,
             status_code=status.HTTP_200_OK)
-async def new_password(
+async def user_new_password(
     id:int,
     new_pass:str,
     session: sessionDep,
@@ -129,21 +132,3 @@ async def new_password(
   session.commit()
   session.refresh(user)
   return user
-
-
-'''
-@router.post("/skill",response_model=User_read)
-async def create_user(
-    session: sessionDep,
-    user_in:User_base,
-    current_user: User = Depends(check_admin)
-    ):
-    user_new = User(**user_in.model_dump())
-    user_new.hashed_password = hash_password("Inicio")
-
-    session.add(user_new)
-    session.commit()
-    session.refresh(user_new)
-    return user_new
-
-    '''
