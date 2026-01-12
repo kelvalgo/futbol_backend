@@ -2,15 +2,16 @@ from fastapi import APIRouter,Depends,HTTPException,status
 from app.models.skill import  Skill
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security import get_current_user, check_admin
+from app.core.security import get_current_user
 from app.models.user import User
-from app.shemas.user import User_read, User_update
+from app.schemas.user import UserRead
 from app.core.hashing import hash_password
 
 
 router=APIRouter(prefix="/user", tags=["User"])
 # 🔓 Solo usuarios autenticados
-@router.get("/",response_model=list[User_read])
+@router.get("/",response_model=list[UserRead],
+               status_code=status.HTTP_200_OK)
 async def list_user(
     session: sessionDep,
     current_user: User = Depends(get_current_user)
@@ -19,7 +20,7 @@ async def list_user(
 
 
 @router.put("/{new_password}",
-            response_model=User_read,
+            response_model=UserRead,
             status_code=status.HTTP_200_OK)
 async def new_password(
     new_pass:str,

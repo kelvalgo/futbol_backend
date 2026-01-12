@@ -1,17 +1,16 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security import get_current_user, check_admin
+from app.core.security import  check_admin
 from app.models.user import User
 from app.models.skill import Skill
-from app.shemas.skill import Skill_read,Skill_create,Skill_update
-from app.core.hashing import hash_password
+from app.schemas.skill import SkillRead,SkillCreate,SkillUpdate
 
 
 router=APIRouter(prefix="/admin/skill", tags=["Admin - Skill"])
 
 
-@router.get("/",response_model=list[Skill_read], 
+@router.get("/",response_model=list[SkillRead], 
             status_code=status.HTTP_200_OK)
 async def list_skill(
     session: sessionDep,
@@ -19,9 +18,9 @@ async def list_skill(
 ):
     return session.exec(select(Skill)).all()
 
-@router.post("/",response_model=Skill_read,
+@router.post("/",response_model=SkillRead,
              status_code=status.HTTP_201_CREATED)
-def create_skill(skill_in:Skill_create,
+def create_skill(skill_in:SkillCreate,
                  session: sessionDep,
                  current_user: User = Depends(check_admin)):
     
@@ -38,7 +37,7 @@ def create_skill(skill_in:Skill_create,
     session.refresh(skill_new)
     return skill_new
     
-@router.delete("/{skill_id}",response_model=Skill_read,
+@router.delete("/{skill_id}",response_model=SkillRead,
                status_code=status.HTTP_200_OK)
 async def delete_skill(
     skill_id:int,
@@ -54,11 +53,11 @@ async def delete_skill(
 
 
 @router.put("/",
-    response_model=Skill_read,
+    response_model=SkillRead,
     status_code=status.HTTP_200_OK
 )
 def update_skill_put(
-    Skill_in: Skill_update,
+    Skill_in: SkillUpdate,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -75,11 +74,11 @@ def update_skill_put(
 
 
 @router.patch("/",
-    response_model=Skill_read,
+    response_model=SkillRead,
     status_code=status.HTTP_200_OK
 )
 def update_skill_patch(
-    skill_in: Skill_update,
+    skill_in: SkillUpdate,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):

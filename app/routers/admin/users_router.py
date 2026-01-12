@@ -3,9 +3,7 @@ from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security import get_current_user, check_admin
 from app.models.user import User
-from app.models.skill import Skill
-from app.shemas.user import User_read, User_update,User_create
-from app.shemas.skill import Skill_read,Skill_create,Skill_update
+from app.schemas.user import UserRead, UserUpdate,UserCreate
 from app.core.hashing import hash_password
 
 
@@ -22,7 +20,7 @@ async def list_user(
 '''
 
 #User
-@router.get("/",response_model=list[User_read],
+@router.get("/",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
 async def list_user(
     session: sessionDep,
@@ -30,11 +28,11 @@ async def list_user(
 ):
     return session.exec(select(User)).all()
 
-@router.post("/",response_model=User_read,
+@router.post("/",response_model=UserRead,
                status_code=status.HTTP_201_CREATED)
 async def create_user(
     session: sessionDep,
-    user_in:User_create,
+    user_in:UserCreate,
     current_user: User = Depends(check_admin)
     ):
 
@@ -54,7 +52,7 @@ async def create_user(
     session.refresh(user_new)
     return user_new
 
-@router.delete("/{user_id}",response_model=User_read,
+@router.delete("/{user_id}",response_model=UserRead,
                status_code=status.HTTP_200_OK)
 async def delete_user(
     user_id:int,
@@ -69,11 +67,11 @@ async def delete_user(
     return user
 
 @router.put("/",
-    response_model=User_read,
+    response_model=UserRead,
     status_code=status.HTTP_200_OK
 )
 def update_user_put(
-    user_in: User_update,
+    user_in: UserUpdate,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -89,11 +87,11 @@ def update_user_put(
     return user
 
 @router.patch("/",
-    response_model=User_read,
+    response_model=UserRead,
     status_code=status.HTTP_200_OK
 )
 def update_user_patch(
-    user_in: User_update,
+    user_in: UserUpdate,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):
@@ -118,7 +116,7 @@ def update_user_patch(
 
 
 @router.put("/user_id/{id}/pass/{new_password}",
-            response_model=User_read,
+            response_model=UserRead,
             status_code=status.HTTP_200_OK)
 async def user_new_password(
     id:int,
