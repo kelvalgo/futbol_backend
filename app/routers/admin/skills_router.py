@@ -24,7 +24,7 @@ def create_skill(skill_in:SkillCreate,
                  session: sessionDep,
                  current_user: User = Depends(check_admin)):
     
-    template= select(Skill).where(skill_in.user_id==-Skill.user_id)
+    template= select(Skill).where(skill_in.user_id==Skill.user_id)
     skill=session.exec(template).first()
     if skill:
         raise HTTPException(

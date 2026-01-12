@@ -1,11 +1,10 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security import get_current_user, check_admin
+from app.core.security import check_admin
 from app.models.user import User
 from app.models.game_table import GameTable
-from app.schemas.game_table import GameTableRead,GameTableCreate,GameTableUpdate,GameTableUpdatePatch
-from app.core.hashing import hash_password
+from app.schemas.game_table import GameTableRead,GameTableCreate,GameTableUpdate
 
 
 router=APIRouter(prefix="/admin/game_table", tags=["Admin - GameTable"])
@@ -26,12 +25,12 @@ def create_game_table(game_table_in:GameTableCreate,
                  session: sessionDep,
                  current_user: User = Depends(check_admin)):
     
-    template= select(GameTable).where(game_table_in.user_id==-GameTable.user_id)
+    template= select(GameTable).where(game_table_in.user_id==GameTable.user_id)
     game_table=session.exec(template).first()
     if game_table:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Skills already exists"
+            detail="Game table already exists"
         )
     game_table_new = GameTable(**game_table_in.model_dump())
     session.add(game_table_new)

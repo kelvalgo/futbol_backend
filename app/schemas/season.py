@@ -1,24 +1,21 @@
 from pydantic import BaseModel,Field
-from typing import Optional
-from datetime import datetime,timezone
 
 
-class SeasonBase(BaseModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    name: str  # “Opening 2026”, “Closing 2026”
-    year: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    is_active: bool = Field(default=True)
+class SeasonBase(BaseModel):
+    name: str = None # “Opening 2026”, “Closing 2026”
+    year:int = None
+    is_active: bool  | None = Field(default=True)
 
-
+ 
 class SeasonCreate (SeasonBase):  
-    user_id: int 
+    pass
 
 class SeasonUpdate (SeasonBase):  
-    id:int 
+    id:int
 
 class SeasonRead(SeasonBase):
     id:int
-    user_id: int = None    
+    
 
 
 

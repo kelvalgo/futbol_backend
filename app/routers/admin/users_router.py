@@ -9,17 +9,7 @@ from app.core.hashing import hash_password
 
 router=APIRouter(prefix="/admin/user", tags=["Admin - User"])
 
-'''
-# 🔓 Solo usuarios autenticados
-@router.get("/",response_model=list[User])
-async def list_user(
-    session: sessionDep,
-    current_user: User = Depends(get_current_user)
-):
-    return session.exec(select(User)).all()
-'''
 
-#User
 @router.get("/",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
 async def list_user(

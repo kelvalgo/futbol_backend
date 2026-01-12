@@ -4,12 +4,12 @@ from app.core.enum.position_enum import PositionEnum
 
 
 class SkillBase(BaseModel):
-    position:PositionEnum = Field(default=None)
+    position:PositionEnum  | None = Field(default=None)
     spatial_condition:bool = None
-    gk : float=Field(default=None,ge=0, le=5)
-    df : float=Field(default=None,ge=0, le=5)
-    mf : float=Field(default=None,ge=0, le=5)
-    wf : float=Field(default=None,ge=0, le=5)
+    gk : float | None=Field(default=None,ge=0, le=5)
+    df : float | None=Field(default=None,ge=0, le=5)
+    mf : float | None=Field(default=None,ge=0, le=5)
+    wf : float | None=Field(default=None,ge=0, le=5)
 
 class SkillCreate (SkillBase):  
     user_id: int 
