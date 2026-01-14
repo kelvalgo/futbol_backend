@@ -1,21 +1,24 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
-from datetime import datetime,timezone
+from datetime import date
+from app.core.enum.team_enum import TeamEnum
 
 if TYPE_CHECKING:
     from app.models.season import Season
-    #from app.models.match_player import MatchPlayer
+    from app.models.match_player import MatchPlayer
 
 class Match(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     season_id: int = Field(foreign_key="season.id")
 
-    match_date: datetime = Field(default_factory=timezone.utc)
+    match_date: date
 
     blue_score: int
     red_score: int
+    win:TeamEnum|None=Field(default=None)
 
     season: Optional["Season"] = Relationship(back_populates="matches")
 
-    #players: list["MatchPlayer"] = Relationship(back_populates="match")
+    players: list["MatchPlayer"] = Relationship(back_populates="match",
+                                                sa_relationship_kwargs={"cascade": "all, delete-orphan"})

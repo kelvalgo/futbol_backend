@@ -7,7 +7,7 @@ from app.models.skill import Skill
 from app.schemas.skill import SkillRead,SkillCreate,SkillUpdate
 
 
-router=APIRouter(prefix="/admin/skill", tags=["Admin - Skill"])
+router=APIRouter(prefix="/skill", tags=["Admin - Skill"])
 
 
 @router.get("/",response_model=list[SkillRead], 

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class Season(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str  # “Opening 2026”, “Closing 2026”
-    year: int 
+    year: int = Field(ge=1900, le=2100)
     is_active: bool = Field(default=True)
 
 

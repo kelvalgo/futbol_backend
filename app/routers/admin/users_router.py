@@ -7,7 +7,7 @@ from app.schemas.user import UserRead, UserUpdate,UserCreate
 from app.core.hashing import hash_password
 
 
-router=APIRouter(prefix="/admin/user", tags=["Admin - User"])
+router=APIRouter(prefix="/user", tags=["Admin - User"])
 
 
 @router.get("/",response_model=list[UserRead],

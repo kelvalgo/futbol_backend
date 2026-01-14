@@ -7,7 +7,7 @@ from app.models.game_table import GameTable
 from app.schemas.game_table import GameTableRead,GameTableCreate,GameTableUpdate
 
 
-router=APIRouter(prefix="/admin/game_table", tags=["Admin - GameTable"])
+router=APIRouter(prefix="/game_table", tags=["Admin - GameTable"])
 
 
 @router.get("/",response_model=list[GameTableRead], 

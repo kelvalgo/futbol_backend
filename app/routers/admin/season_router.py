@@ -7,12 +7,12 @@ from app.models.season import Season
 from app.schemas.season import SeasonRead,SeasonCreate,SeasonUpdate
 
 
-router=APIRouter(prefix="/admin/season", tags=["Admin - Season"])
+router=APIRouter(prefix="/season", tags=["Admin - Season"])
 
 
 @router.get("/",response_model=list[SeasonRead], 
             status_code=status.HTTP_200_OK)
-async def list_game_table(
+async def list_season_table(
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):
