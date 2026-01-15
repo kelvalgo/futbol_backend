@@ -4,7 +4,7 @@ from sqlmodel import select
 from app.core.security import check_admin
 from app.models.user import User
 from app.models.match_player import MatchPlayer
-from app.schemas.match_player import MatchPlayerRead,MatchPlayerCreate,MatchPlayerUpdate
+from app.schemas.match_player import MatchPlayerRead,MatchPlayerCreate,MatchPlayerUpdatePut,MatchPlayerUpdatePatch
 
 
 router=APIRouter(prefix="/match_player", tags=["Admin - MatchPlayer"])
@@ -59,7 +59,7 @@ async def delete_player_match(
     status_code=status.HTTP_200_OK
 )
 def update_match_player_put(
-    match_player_in: MatchPlayerUpdate,
+    match_player_in: MatchPlayerUpdatePut,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -80,7 +80,7 @@ def update_match_player_put(
     status_code=status.HTTP_200_OK
 )
 def update_match_player_patch(
-    match_player_in: MatchPlayerUpdate,
+    match_player_in: MatchPlayerUpdatePatch,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):

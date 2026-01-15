@@ -17,10 +17,21 @@ class MatchPlayerCreate (MatchPlayer):
     match_id: int = None
     user_id: int = None
 
-class MatchPlayerUpdate (MatchPlayer):  
-    id: int = None 
-    match_id: int = None
-    user_id: int = None    
+class MatchPlayerUpdatePut (BaseModel):  
+    id: int
+    match_id: int 
+    user_id: int
+    team:TeamEnum 
+    position:PositionEnum
+    matchResult:MatchResult
+    goals_scored: int
+    goals_conceded_as_goalkeeper: int
+
+class MatchPlayerUpdatePatch (MatchPlayer):  
+    id: int 
+    match_id: int 
+    user_id: int 
+  
    
 
 

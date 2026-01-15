@@ -10,7 +10,13 @@ class SeasonBase(BaseModel):
 class SeasonCreate (SeasonBase):  
     pass
 
-class SeasonUpdate (SeasonBase):  
+class SeasonUpdatePut (BaseModel):  
+    id:int
+    name: str  # “Opening 2026”, “Closing 2026”
+    year:int = Field(ge=1900, le=2100)
+    is_active: bool   = Field(default=True)
+
+class SeasonUpdatePatch (SeasonBase):  
     id:int
 
 class SeasonRead(SeasonBase):

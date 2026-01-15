@@ -4,7 +4,7 @@ from sqlmodel import select
 from app.core.security import  check_admin
 from app.models.user import User
 from app.models.skill import Skill
-from app.schemas.skill import SkillRead,SkillCreate,SkillUpdate
+from app.schemas.skill import SkillRead,SkillCreate,SkillUpdatePut,SkillUpdatePatch
 
 
 router=APIRouter(prefix="/skill", tags=["Admin - Skill"])
@@ -57,7 +57,7 @@ async def delete_skill(
     status_code=status.HTTP_200_OK
 )
 def update_skill_put(
-    Skill_in: SkillUpdate,
+    Skill_in: SkillUpdatePut,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -78,7 +78,7 @@ def update_skill_put(
     status_code=status.HTTP_200_OK
 )
 def update_skill_patch(
-    skill_in: SkillUpdate,
+    skill_in: SkillUpdatePatch,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):

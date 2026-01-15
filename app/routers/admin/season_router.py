@@ -4,7 +4,7 @@ from sqlmodel import select
 from app.core.security import check_admin
 from app.models.user import User
 from app.models.season import Season
-from app.schemas.season import SeasonRead,SeasonCreate,SeasonUpdate
+from app.schemas.season import SeasonRead,SeasonCreate,SeasonUpdatePut,SeasonUpdatePatch
 
 
 router=APIRouter(prefix="/season", tags=["Admin - Season"])
@@ -59,7 +59,7 @@ async def delete_season(
     status_code=status.HTTP_200_OK
 )
 def update_season_put(
-    season_in: SeasonUpdate,
+    season_in: SeasonUpdatePut,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -80,7 +80,7 @@ def update_season_put(
     status_code=status.HTTP_200_OK
 )
 def update_season_patch(
-    season_in: SeasonUpdate,
+    season_in: SeasonUpdatePatch,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):

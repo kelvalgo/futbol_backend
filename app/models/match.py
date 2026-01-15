@@ -17,6 +17,7 @@ class Match(SQLModel, table=True):
     blue_score: int
     red_score: int
     win:TeamEnum|None=Field(default=None)
+    is_active: bool = Field(default=True)
 
     season: Optional["Season"] = Relationship(back_populates="matches")
 

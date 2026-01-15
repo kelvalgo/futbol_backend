@@ -4,7 +4,7 @@ from sqlmodel import select
 from app.core.security import check_admin
 from app.models.user import User
 from app.models.game_table import GameTable
-from app.schemas.game_table import GameTableRead,GameTableCreate,GameTableUpdate
+from app.schemas.game_table import GameTableRead,GameTableCreate,GameTableUpdatePut,GameTableUpdatePatch
 
 
 router=APIRouter(prefix="/game_table", tags=["Admin - GameTable"])
@@ -58,7 +58,7 @@ async def delete_game_table(
     status_code=status.HTTP_200_OK
 )
 def update_game_table_put(
-    game_table_in: GameTableUpdate,
+    game_table_in: GameTableUpdatePut,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -79,7 +79,7 @@ def update_game_table_put(
     status_code=status.HTTP_200_OK
 )
 def update_game_table_patch(
-    game_table_in: GameTableUpdate,
+    game_table_in: GameTableUpdatePatch,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):

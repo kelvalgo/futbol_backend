@@ -3,7 +3,7 @@ from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security import get_current_user, check_admin
 from app.models.user import User
-from app.schemas.user import UserRead, UserUpdate,UserCreate
+from app.schemas.user import UserRead, UserUpdatePut,UserUpdatePatch,UserCreate
 from app.core.hashing import hash_password
 
 
@@ -61,7 +61,7 @@ async def delete_user(
     status_code=status.HTTP_200_OK
 )
 def update_user_put(
-    user_in: UserUpdate,
+    user_in: UserUpdatePut,
     session:sessionDep,
     current_user: User = Depends(check_admin)
     ):
@@ -81,7 +81,7 @@ def update_user_put(
     status_code=status.HTTP_200_OK
 )
 def update_user_patch(
-    user_in: UserUpdate,
+    user_in: UserUpdatePatch,
     session: sessionDep,
     current_user: User = Depends(check_admin)
 ):
@@ -112,7 +112,7 @@ async def user_new_password(
     id:int,
     new_pass:str,
     session: sessionDep,
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(check_admin)
 ):
   user= session.get(User,id)
   new_hash=hash_password(new_pass)
