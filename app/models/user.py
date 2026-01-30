@@ -5,6 +5,7 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.skill import Skill
     from app.models.game_table import GameTable
+    from app.models.user_groupf import UserGroupF
 
 class User(SQLModel,table=True):
     id:int|None=Field(default=None,primary_key=True)
@@ -20,6 +21,7 @@ class User(SQLModel,table=True):
                                            sa_relationship_kwargs={"cascade": "all, delete-orphan",
                                                                    "foreign_keys": "[GameTable.user_id]"}
                                            )
+    user_group: list["UserGroupF"] = Relationship(back_populates="user")
     
 
 

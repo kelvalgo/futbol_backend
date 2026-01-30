@@ -3,3 +3,7 @@ from app.models.skill import Skill
 from app.models.season import Season
 from app.models.game_table import GameTable
 from app.models.match import Match
+from app.models.donation import Donation
+from app.models.group_friends import GroupFriends
+from app.models.match_player import MatchPlayer
+from app.models.user_groupf import UserGroupF
