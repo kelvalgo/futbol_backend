@@ -1,12 +1,14 @@
-from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi import APIRouter,Depends,HTTPException, Query,status
 from app.models.group_friends import GroupFriends
 from app.models.skill import  Skill
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security import get_current_user
+from app.core.security.security import get_current_user
 from app.models.user import User
 from app.schemas.user import UserRead
 from app.services.user_service import list_users_of_group
+from app.filter.group_filter import GroupFilter
+from app.filter.pagination import Pagination
 
 
 from oso import Oso
@@ -20,19 +22,21 @@ router=APIRouter(prefix="/view", tags=["User"])
 
 @router.get("/{id_group}/id_group",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
-async def list_user(
-    id_group:int,
+async def list_user(    
     session: sessionDep,
+    param:GroupFilter = Depends(),
     current_user: User = Depends(get_current_user),
     oso:Oso=Depends(get_oso)
 ):
+   
     # Validation 
-    if not oso.is_allowed(current_user.id, "user", id_group):
+    if not oso.is_allowed(current_user.id, "user", param.group_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail="Forbidden"
         )
-    return list_users_of_group(session,id_group,current_user)
+    
+    return list_users_of_group(session,param)
 
 
 '''

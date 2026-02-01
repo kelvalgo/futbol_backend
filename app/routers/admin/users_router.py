@@ -1,10 +1,10 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security import get_current_user, check_admin
+from app.core.security.security import get_current_user, check_admin
 from app.models.user import User
 from app.schemas.user import UserRead, UserUpdatePut,UserUpdatePatch,UserCreate
-from app.core.hashing import hash_password
+from app.core.security.hashing import hash_password
 
 
 router=APIRouter(prefix="/user", tags=["Admin - User"])

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException,Depends,status
-from app.core.security import check_admin
+from app.core.security.security import check_admin
 from app.models.user import User
 from typing import List
 from app.schemas.team import Jugador, GenerarEquiposResponse
-from app.core.teams.team_generator import generar_equipos
+from app.services.team_generator import generar_equipos
 
 router = APIRouter(prefix="/generate_teams", tags=["Admin - Generate Teams"])
 

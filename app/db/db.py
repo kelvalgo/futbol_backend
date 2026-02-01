@@ -9,7 +9,7 @@ from app.core.enum.rol import Rol
 from app.models.user import User
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF
-from app.core.hashing import hash_password
+from app.core.security.hashing import hash_password
 
 
 

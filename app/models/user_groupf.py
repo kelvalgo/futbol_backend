@@ -15,12 +15,10 @@ class UserGroupF(SQLModel,table=True):
 
 
     user_id:int = Field(
-        foreign_key="user.id",
-        unique=True  # 🔴 clave para 1 a 1
+        foreign_key="user.id"
     )
     group_id:int = Field(
-        foreign_key="groupfriends.id",
-        unique=True  # 🔴 clave para 1 a 1
+        foreign_key="groupfriends.id"
     )
 
     rol: Rol=Field(default=None)  # admin | user
