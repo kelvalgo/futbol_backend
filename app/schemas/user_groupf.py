@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
-from app.core.enum.rol import Rol
+from app.core.enums.rol import Rol
 
 class UserGroupf(BaseModel):
     user_id:int

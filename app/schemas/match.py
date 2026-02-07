@@ -1,6 +1,6 @@
 from pydantic import BaseModel,Field
 from datetime import date
-from app.core.enum.team_enum import TeamEnum
+from app.core.enums.team_enum import TeamEnum
 
 class MatchBase(BaseModel):
 

@@ -1,14 +1,10 @@
 from datetime import datetime
 from sqlmodel import Session,select
-from app.core.enum.rol import Rol
+from app.core.enums.rol import Rol
+from app.schemas.new_count import NewCount
 from app.models.user import User
 from app.models.user_groupf import UserGroupF
 from app.filter.group_filter import GroupFilter
-
-
-
-
-
 
 
 def get_users_by_group(session:Session,param:GroupFilter)->list[User]:
@@ -32,5 +28,10 @@ def create_user_groupf(session: Session,user_group:UserGroupF):
     session.add(user_group)
     session.flush()
     return
+
+def create_count(session:Session,new_count:User): 
+    session.add(new_count)
+    session.flush()
+    return new_count
 
 

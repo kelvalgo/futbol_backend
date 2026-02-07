@@ -1,11 +1,11 @@
-from pydantic import BaseModel,EmailStr,Field
+from pydantic import BaseModel,EmailStr,Field, SecretStr
 from typing import Optional
 
 class UserBase(BaseModel):
     username:str = None
     email:Optional[EmailStr] = None
     full_name:str = None
-    admin:bool | None = Field(default=False)
+    #admin:bool | None = Field(default=False)
     disable:bool  | None = Field(default=False)
 
 class UserCreate (UserBase):  
@@ -17,7 +17,7 @@ class UserUpdatePut (BaseModel):
     username:str
     email:Optional[EmailStr]
     full_name:str 
-    admin:bool 
+    #admin:bool 
     disable:bool
 
 class UserUpdatePatch (UserBase):  
@@ -25,3 +25,10 @@ class UserUpdatePatch (UserBase):
 
 class UserRead(UserBase):
     id:int
+
+class NewCount(BaseModel):
+    username:str
+    full_name:str
+    email:Optional[EmailStr] = None    
+    disable:bool  | None = Field(default=False)
+    password:SecretStr 

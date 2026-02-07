@@ -12,7 +12,7 @@ class User(SQLModel,table=True):
     username:str = Field(index=True, unique=True)
     email:Optional[EmailStr] = None
     full_name:str
-    admin:bool=Field(default=False)
+    #admin:bool=Field(default=False)
     disable:bool=Field(default=False)
     hashed_password:str
     skill: Optional["Skill"] = Relationship(back_populates="user",

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from app.core.enum.position_enum import PositionEnum
+from app.core.enums.position_enum import PositionEnum
 
 
 class Jugador(BaseModel):

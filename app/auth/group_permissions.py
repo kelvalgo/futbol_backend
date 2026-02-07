@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from app.core.enum.rol import Rol
+from app.core.enums.rol import Rol
 from app.db.db import engine
 from app.models.user_groupf import UserGroupF
 

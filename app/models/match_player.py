@@ -1,8 +1,8 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
-from app.core.enum.match_result import MatchResult
-from app.core.enum.position_enum import PositionEnum
-from app.core.enum.team_enum import TeamEnum
+from app.core.enums.match_result import MatchResult
+from app.core.enums.position_enum import PositionEnum
+from app.core.enums.team_enum import TeamEnum
 
 if TYPE_CHECKING:
     from app.models.user import User

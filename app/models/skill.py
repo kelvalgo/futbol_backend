@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel,Field,Relationship
 from typing import Optional,TYPE_CHECKING
 from sqlalchemy import CheckConstraint
-from app.core.enum.position_enum import PositionEnum
+from app.core.enums.position_enum import PositionEnum
 
 if TYPE_CHECKING:
     from app.models.user import User

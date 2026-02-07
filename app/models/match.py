@@ -1,7 +1,8 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from datetime import date
-from app.core.enum.team_enum import TeamEnum
+from app.core.enums.status_enum import Status
+from app.core.enums.team_enum import TeamEnum
 
 if TYPE_CHECKING:
     from app.models.season import Season
@@ -17,7 +18,7 @@ class Match(SQLModel, table=True):
     blue_score: int
     red_score: int
     win:TeamEnum|None=Field(default=None)
-    is_active: bool = Field(default=True)
+    is_active: Status = Field(default=Status.active)
 
     season: Optional["Season"] = Relationship(back_populates="matches")
 

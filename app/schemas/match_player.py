@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from app.core.enum.match_result import MatchResult
-from app.core.enum.position_enum import PositionEnum
-from app.core.enum.team_enum import TeamEnum
+from app.core.enums.match_result import MatchResult
+from app.core.enums.position_enum import PositionEnum
+from app.core.enums.team_enum import TeamEnum
 
 class MatchPlayer(BaseModel):   
 

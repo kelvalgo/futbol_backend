@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
-from app.core.enum.rol import Rol
+from app.core.enums.rol import Rol
 from sqlalchemy import CheckConstraint, UniqueConstraint
 
 if TYPE_CHECKING:

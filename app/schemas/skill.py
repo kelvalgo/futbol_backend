@@ -1,5 +1,5 @@
 from pydantic import BaseModel,Field
-from app.core.enum.position_enum import PositionEnum
+from app.core.enums.position_enum import PositionEnum
 
 
 class SkillBase(BaseModel):

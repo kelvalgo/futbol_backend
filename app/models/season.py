@@ -1,6 +1,8 @@
 from sqlmodel import SQLModel,Field,Relationship
 from typing import TYPE_CHECKING
 
+from app.core.enums.status_enum import Status
+
 if TYPE_CHECKING:
     from app.models.game_table import GameTable
     from app.models.match import Match
@@ -10,7 +12,7 @@ class Season(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str  # “Opening 2026”, “Closing 2026”
     year: int = Field(ge=1900, le=2100)
-    is_active: bool = Field(default=True)
+    is_active: Status = Field(default=Status.active)
 
     group_id: int = Field(default=None, foreign_key="groupfriends.id")
 

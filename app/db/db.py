@@ -5,7 +5,7 @@ from sqlmodel import Session, create_engine, SQLModel, select
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-from app.core.enum.rol import Rol
+from app.core.enums.rol import Rol
 from app.models.user import User
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF

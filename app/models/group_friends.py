@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
+from app.core.enums.status_enum import Status
 
 if TYPE_CHECKING:
     from app.models.donation import Donation
@@ -16,7 +17,7 @@ class GroupFriends(SQLModel, table=True):
     date_creation:str=Field(default=None)
     last_date_donation: Optional[str] = Field(default=None)
     perioding_donation:int = Field(default=30)  # días
-    activo: bool = Field(default=True)
+    is_active: Status = Field(default=Status.active)
 
     donation: list["Donation"] = Relationship(back_populates="group_friends")
 
