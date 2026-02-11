@@ -1,6 +1,7 @@
 from pydantic import EmailStr
 from sqlmodel import SQLModel,Field,Relationship
 from typing import Optional, TYPE_CHECKING
+from app.core.enums.status_enum import Status
 
 if TYPE_CHECKING:
     from app.models.skill import Skill
@@ -13,7 +14,7 @@ class User(SQLModel,table=True):
     email:Optional[EmailStr] = None
     full_name:str
     #admin:bool=Field(default=False)
-    disable:bool=Field(default=False)
+    status:Status=Field(default=Status.active)
     hashed_password:str
     skill: Optional["Skill"] = Relationship(back_populates="user",
                                             sa_relationship_kwargs={"cascade": "all, delete-orphan"})

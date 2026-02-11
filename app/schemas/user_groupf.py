@@ -9,7 +9,7 @@ class UserGroupf(BaseModel):
     group_id:int
     rol:Rol
     disable:bool
-    fecha_ingreso:str
+    date_creation:str
 
 class UserGroupfCreate (UserGroupf):      
     pass

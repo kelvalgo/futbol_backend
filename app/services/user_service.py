@@ -1,14 +1,15 @@
 from datetime import datetime
 from fastapi import HTTPException
+from pydantic import SecretStr
 from sqlalchemy import select
 from sqlmodel import Session
 from app.core.enums.rol import Rol
 from app.core.security.hashing import hash_password
 from app.models.user import User
 from app.models.user_groupf import UserGroupF
-from app.repositories.user_repository import create_count, create_user, create_user_groupf, get_user_by_username, get_users_by_group
-from app.filter.group_filter import GroupFilter
-from app.schemas.user import UserCreate,NewCount
+from app.repositories.user_repository import create_acount, create_user, create_user_groupf, get_user_by_username, get_users_by_group, new_password
+from app.filter.group_filter import UserGroupFilter
+from app.schemas.user import UserCreate,NewAcount
 from fastapi import HTTPException,status
 
 from app.schemas.user_groupf import UserGroupfCreate
@@ -16,10 +17,11 @@ from app.schemas.user_groupf import UserGroupfCreate
 
 def list_users_of_group(
     session: Session,
-    param: GroupFilter,
+    group_id:int,
+    param: UserGroupFilter,
     ):   
     
-    return get_users_by_group(session, param) 
+    return get_users_by_group(session,group_id,param) 
 
 
 def create_users_by_group(
@@ -39,24 +41,24 @@ def create_users_by_group(
     user_new.hashed_password = hash_password("Inicio")  
 
     new_user=create_user(session,user_new)
-
+    session.flush()
     usergf=UserGroupfCreate(
                     user_id=new_user.id,
                     group_id=id_group,
                     rol=Rol.user,
                     disable=False,
-                    fecha_ingreso=datetime.now().strftime("%Y-%m-%d")
+                    date_creation=datetime.now().strftime("%Y-%m-%d")
                     )    
     user_gf = UserGroupF(**usergf.model_dump())
+    print(f"dato: {user_gf}")
     create_relation_user_groupf(session,user_gf)
-    
+    session.commit()
     return  new_user
 
 def create_relation_user_groupf(session: Session,user_group:UserGroupF)->None:
      create_user_groupf(session,user_group)
-     print("relation created")
 
-def create_new_count(session: Session,new_count:NewCount):
+def create_new_acount(session: Session,new_count:NewAcount):
 
     count = session.exec(
             select(User).where(User.username == new_count.username)
@@ -68,7 +70,8 @@ def create_new_count(session: Session,new_count:NewCount):
 
             count = User(username=new_count.username,full_name=new_count.full_name,
                          email=new_count.email,hashed_password=hashed_password)
-            create_count(session,count)
+            create_acount(session,count)
+            session.commit()
 
     else:
         raise HTTPException(
@@ -78,4 +81,7 @@ def create_new_count(session: Session,new_count:NewCount):
 
     return count
    
-    
+def create_new_password(session:Session,user:User,new_pass:SecretStr)->User:
+    userpass=new_password(session,user,new_pass.get_secret_value())
+    session.commit()
+    return userpass

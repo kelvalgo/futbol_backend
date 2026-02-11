@@ -13,9 +13,9 @@ class GroupFriends(SQLModel, table=True):
 
     id:int|None = Field(default=None, primary_key=True)
     name:str=Field(default=None)
-    description:str =Field(default=None)
-    date_creation:str=Field(default=None)
-    last_date_donation: Optional[str] = Field(default=None)
+    description:str =Field(nullable=True)
+    date_creation:str=Field(nullable=True)
+    last_date_donation: Optional[str] = Field(nullable=True)
     perioding_donation:int = Field(default=30)  # días
     is_active: Status = Field(default=Status.active)
 

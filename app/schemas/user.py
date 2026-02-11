@@ -1,12 +1,14 @@
 from pydantic import BaseModel,EmailStr,Field, SecretStr
 from typing import Optional
 
+from app.core.enums.status_enum import Status
+
 class UserBase(BaseModel):
     username:str = None
     email:Optional[EmailStr] = None
     full_name:str = None
     #admin:bool | None = Field(default=False)
-    disable:bool  | None = Field(default=False)
+    status:Status = Field(default=Status.active)
 
 class UserCreate (UserBase):  
     pass
@@ -18,7 +20,7 @@ class UserUpdatePut (BaseModel):
     email:Optional[EmailStr]
     full_name:str 
     #admin:bool 
-    disable:bool
+    status:Status
 
 class UserUpdatePatch (UserBase):  
     id:int    
@@ -26,9 +28,9 @@ class UserUpdatePatch (UserBase):
 class UserRead(UserBase):
     id:int
 
-class NewCount(BaseModel):
+class NewAcount(BaseModel):
     username:str
     full_name:str
     email:Optional[EmailStr] = None    
-    disable:bool  | None = Field(default=False)
+    status:Status = Field(default=Status.active)
     password:SecretStr 

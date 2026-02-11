@@ -7,7 +7,7 @@ from app.core.security.security import get_current_user
 from app.models.user import User
 from app.schemas.user import UserRead
 from app.services.user_service import list_users_of_group
-from app.filter.group_filter import GroupFilter
+from app.filter.group_filter import UserGroupFilter
 from app.filter.pagination import Pagination
 
 
@@ -24,7 +24,7 @@ router=APIRouter(prefix="/view", tags=["User"])
                status_code=status.HTTP_200_OK)
 async def list_user(    
     session: sessionDep,
-    param:GroupFilter = Depends(),
+    param:UserGroupFilter = Depends(),
     current_user: User = Depends(get_current_user),
     oso:Oso=Depends(get_oso)
 ):

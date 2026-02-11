@@ -1,4 +1,5 @@
+from app.core.enums.status_enum import Status
 from .pagination import Pagination
 
-class GroupFilter(Pagination):
-    group_id: int
+class UserGroupFilter(Pagination):
+    status:Status

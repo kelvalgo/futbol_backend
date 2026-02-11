@@ -4,7 +4,7 @@ from fastapi import Depends
 from sqlmodel import Session, create_engine, SQLModel, select
 from pathlib import Path
 from contextlib import asynccontextmanager
-
+import os
 from app.core.enums.rol import Rol
 from app.models.user import User
 from app.models.group_friends import GroupFriends
@@ -12,7 +12,7 @@ from app.models.user_groupf import UserGroupF
 from app.core.security.hashing import hash_password
 
 
-
+'''
 BASE_DIR = Path(__file__).resolve().parent.parent
 sqlite_path = BASE_DIR / "db" / "db.sqlite3"
 sqlite_url = f"sqlite:///{sqlite_path}"
@@ -21,8 +21,27 @@ sqlite_url = f"sqlite:///{sqlite_path}"
 #print("📂 EXISTE?:", sqlite_path.exists())
 
 #engine = create_engine(sqlite_url, echo=True)
-engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
+engine = create_engine(sqlite_url, connect_args={"check_same_thread": False,"timeout": 30},
+    pool_pre_ping=True,)
 
+
+
+with engine.connect() as conn:
+    conn.exec_driver_sql("PRAGMA journal_mode=WAL;")
+    conn.exec_driver_sql("PRAGMA synchronous=NORMAL;")
+
+'''
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not defined")
+
+engine = create_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_pre_ping=True
+)
 
 def get_session():
     with Session(engine) as session:

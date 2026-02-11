@@ -23,7 +23,7 @@ class UserGroupF(SQLModel,table=True):
 
     rol: Rol=Field(default=None)  # admin | user
     disable:bool =Field(default=False)
-    fecha_ingreso:str=Field(default=None)
+    date_creation:str=Field(nullable=True)
 
     user:"User" = Relationship(back_populates="user_group")
     group_friends:"GroupFriends" = Relationship(back_populates="user_group")

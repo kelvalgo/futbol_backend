@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 from app.db.db import sessionDep
 from app.core.security.token_jwt import decode_token
 from app.models.user import User
+from app.core.enums.status_enum import Status
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
@@ -22,7 +23,7 @@ def get_current_user(   db: sessionDep,
     user = get_user(username,db)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
-    if  user.disable:   # active == 0 o False
+    if  user.status==Status.inactive:   # status == inactive
         raise HTTPException(
         status_code=403,
         detail="User inactive"

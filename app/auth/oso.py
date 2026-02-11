@@ -1,5 +1,4 @@
 from oso import Oso
-
 from app.models.user import User
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF

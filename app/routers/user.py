@@ -9,13 +9,15 @@ from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security.security import get_current_user
 from app.models.user import User
+from app.schemas.group_friends import GroupFriendCreate, GroupFriendRead
 from app.schemas.user import UserCreate, UserRead
 from app.models.user_groupf import UserGroupF
-from app.schemas.user_groupf import UserGroupfCreate
-from app.services.user_service import create_relation_user_groupf, list_users_of_group,create_users_by_group,create_new_count
-from app.filter.group_filter import GroupFilter
+from app.services.groupf_service import create_group_friend
+from app.services.user_service import create_new_password, create_relation_user_groupf, list_users_of_group,create_users_by_group,create_new_acount
+from app.filter.group_filter import UserGroupFilter
 from app.filter.pagination import Pagination
-from app.schemas.new_count import NewCount
+from app.schemas.new_acount import NewAcount
+from app.core.enums.auth_results import AuthResult
 
 
 from oso import Oso
@@ -27,23 +29,38 @@ router=APIRouter(prefix="/user", tags=["User"])
 
 
 
-@router.get("/{id_group}/id_group",response_model=list[UserRead],
+@router.get("/group/{id_group}/",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
 async def list_user(    
     session: sessionDep,
-    param:GroupFilter = Depends(),
+    group_id: int,
+    param:UserGroupFilter = Depends(),
     current_user: User = Depends(get_current_user),
     oso:Oso=Depends(get_oso)
 ):
-   
+    """
+    List users.
+
+    **Permissions**
+    - User logged.
+
+    **Parameters**
+    - **active**: Show users active or unactivate
+    - **group_id**: Identifier of the group.
+
+    **Returns**
+    - List of users in the group.
+    """
     # Validation 
-    if not oso.is_allowed(current_user.id, "user", param.group_id):
+    group = GroupFriends(id=group_id)
+    
+    if not oso.is_allowed(current_user, "read", group):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Forbidden"
+            detail=AuthResult.FORBIDDEN.value
         )
     
-    return list_users_of_group(session,param)
+    return list_users_of_group(session,group_id,param)
 
 
 
@@ -57,15 +74,29 @@ async def create_user(
     oso:Oso=Depends(get_oso)
     ):
 
+    """
+    Create a user in a group.
+
+    **Permissions**
+    - Only administrators can create users in a group.
+
+    **Parameters**
+    - **id_group**: Identifier of the group.
+    - **user_in**: User data to be created.
+
+    **Returns**
+    - The newly created user.
+    """
+
      # Validation 
-    if not oso.is_allowed(current_user.id, "admin",id_group):
+    group = GroupFriends(id=id_group)
+    if not oso.is_allowed(current_user,"write",group):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Forbidden"
+            detail=AuthResult.FORBIDDEN.value
         )
 
     new_user=create_users_by_group(session,user_in,id_group)
-    session.commit()
     return new_user
 
 
@@ -73,20 +104,63 @@ async def create_user(
             response_model=UserRead,
             status_code=status.HTTP_200_OK)
 async def new_password(
-    new_pass:str,
+    new_pass:SecretStr,
     session: sessionDep,
     current_user: User = Depends(get_current_user)
-):
-  user= session.get(User,current_user.id)
-  new_hash=hash_password(new_pass)
-  user.hashed_password=new_hash
-  session.commit()
-  session.refresh(user)
+):  
+  
+  """
+    new password.
+
+    **Permissions**
+    - User logged.
+
+    **Parameters**
+    - **new_pass**: new password.
+
+    **Returns**
+    - The user.
+  """
+  user=create_new_password(session,current_user,new_pass) 
   return user
 
 @router.post("/new_count",response_model=UserRead,
              status_code=status.HTTP_201_CREATED)
-async def new_account(session: sessionDep, data:NewCount):
-        count=create_new_count(session,data)
-        session.commit()
+async def new_account(session: sessionDep, data:NewAcount):
+        
+        """
+        new account.
+
+        **Permissions**
+        - Unpermissions.
+
+        **Parameters**
+        - **NewCount**: new acount.
+
+        **Returns**
+        - The newly account.
+        """
+        count=create_new_acount(session,data)
         return count
+
+
+@router.post("/new_group",response_model=GroupFriendRead,
+             status_code=status.HTTP_201_CREATED)
+async def new_group(session: sessionDep, data:GroupFriendCreate,
+                    current_user: User = Depends(get_current_user)):
+      
+        """
+        new group.
+
+        **Permissions**
+        - User logged.
+
+        **Parameters**
+        - **data**: Group.
+
+        **Returns**
+        - The newly group..
+        """
+        new_group=create_group_friend(session,data)
+        
+        return new_group
