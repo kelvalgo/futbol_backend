@@ -30,6 +30,13 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/futbot
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir app
+      --reload-include "*.polar"  
     depends_on:
       db:
         condition: service_healthy

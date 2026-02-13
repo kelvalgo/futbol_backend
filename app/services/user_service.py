@@ -11,6 +11,7 @@ from app.repositories.user_repository import create_acount, create_user, create_
 from app.filter.group_filter import UserGroupFilter
 from app.schemas.user import UserCreate,NewAcount
 from fastapi import HTTPException,status
+from app.core.enums.status_enum import Status
 
 from app.schemas.user_groupf import UserGroupfCreate
 
@@ -37,10 +38,21 @@ def create_users_by_group(
             detail="Username already exists"
         )
 
+    new_user=User(
+         username=user_in.username,
+         full_name=user_in.full_name,
+         email=user_in.email,
+         status=Status.active            
+        )    
+    
+
+    '''
     user_new = User(**user_in.model_dump())
     user_new.hashed_password = hash_password("Inicio")  
+    '''
+    new_user.hashed_password = hash_password("Inicio")  
 
-    new_user=create_user(session,user_new)
+    new_user=create_user(session,new_user)
     session.flush()
     usergf=UserGroupfCreate(
                     user_id=new_user.id,

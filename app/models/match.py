@@ -3,6 +3,7 @@ from typing import Optional, TYPE_CHECKING
 from datetime import date
 from app.core.enums.status_enum import Status
 from app.core.enums.team_enum import TeamEnum
+from sqlalchemy import Column, ForeignKey
 
 if TYPE_CHECKING:
     from app.models.season import Season
@@ -11,7 +12,12 @@ if TYPE_CHECKING:
 class Match(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
-    season_id: int = Field(foreign_key="season.id")
+    season_id: int = Field(
+    sa_column=Column(
+        ForeignKey("season.id", ondelete="CASCADE"),
+        nullable=False
+        )
+    )   
 
     match_date: date
 

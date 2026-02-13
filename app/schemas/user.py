@@ -7,11 +7,12 @@ class UserBase(BaseModel):
     username:str = None
     email:Optional[EmailStr] = None
     full_name:str = None
-    #admin:bool | None = Field(default=False)
     status:Status = Field(default=Status.active)
 
-class UserCreate (UserBase):  
-    pass
+class UserCreate (BaseModel):  
+    username:str = None
+    email:Optional[EmailStr] = None
+    full_name:str = None
 
 
 class UserUpdatePut (BaseModel):  
@@ -31,6 +32,5 @@ class UserRead(UserBase):
 class NewAcount(BaseModel):
     username:str
     full_name:str
-    email:Optional[EmailStr] = None    
-    status:Status = Field(default=Status.active)
+    email:Optional[EmailStr] = None 
     password:SecretStr 

@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel,Field,Relationship
 from typing import Optional,TYPE_CHECKING
 from sqlalchemy import CheckConstraint,UniqueConstraint
+from sqlalchemy import Column, ForeignKey
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -10,7 +11,12 @@ class GameTable(SQLModel,table=True):
     id: int|None = Field(default=None, primary_key=True)
 
     user_id: int = Field(foreign_key="user.id")
-    season_id: int = Field(foreign_key="season.id")
+    season_id: int = Field(
+        sa_column=Column(
+            ForeignKey("season.id", ondelete="CASCADE"),
+            nullable=False
+        )
+    )
 
     games:int
     win:int

@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import APIRouter,Depends,HTTPException, Query,status
 from pydantic import SecretStr
+from app.auth.context import RequestContext
 from app.core.enums.rol import Rol
 from app.core.security.hashing import hash_password
 from app.models.group_friends import GroupFriends
@@ -9,14 +10,13 @@ from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security.security import get_current_user
 from app.models.user import User
-from app.schemas.group_friends import GroupFriendCreate, GroupFriendRead
-from app.schemas.user import UserCreate, UserRead
+from app.schemas.group_friends import GroupFriendCreate, GroupFriendRead, GroupFriendsBase
+from app.schemas.user import UserCreate, UserRead,NewAcount
 from app.models.user_groupf import UserGroupF
 from app.services.groupf_service import create_group_friend
 from app.services.user_service import create_new_password, create_relation_user_groupf, list_users_of_group,create_users_by_group,create_new_acount
 from app.filter.group_filter import UserGroupFilter
 from app.filter.pagination import Pagination
-from app.schemas.new_acount import NewAcount
 from app.core.enums.auth_results import AuthResult
 
 
@@ -29,7 +29,7 @@ router=APIRouter(prefix="/user", tags=["User"])
 
 
 
-@router.get("/group/{id_group}/",response_model=list[UserRead],
+@router.get("/id_group/{id_group}/",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
 async def list_user(    
     session: sessionDep,
@@ -53,8 +53,9 @@ async def list_user(
     """
     # Validation 
     group = GroupFriends(id=group_id)
+    context=RequestContext(current_user, session)
     
-    if not oso.is_allowed(current_user, "read", group):
+    if not oso.is_allowed(context, "read", group):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail=AuthResult.FORBIDDEN.value
@@ -64,7 +65,7 @@ async def list_user(
 
 
 
-@router.post("/{id_group}/id_group",response_model=UserRead,
+@router.post("/id_group/{id_group}/",response_model=UserRead,
                status_code=status.HTTP_201_CREATED)
 async def create_user(
     session: sessionDep,
@@ -90,7 +91,8 @@ async def create_user(
 
      # Validation 
     group = GroupFriends(id=id_group)
-    if not oso.is_allowed(current_user,"write",group):
+    context=RequestContext(current_user, session)
+    if not oso.is_allowed(context,"write",group):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail=AuthResult.FORBIDDEN.value
@@ -146,7 +148,8 @@ async def new_account(session: sessionDep, data:NewAcount):
 
 @router.post("/new_group",response_model=GroupFriendRead,
              status_code=status.HTTP_201_CREATED)
-async def new_group(session: sessionDep, data:GroupFriendCreate,
+async def new_group(session: sessionDep,
+                    data:GroupFriendCreate,   
                     current_user: User = Depends(get_current_user)):
       
         """
@@ -161,6 +164,6 @@ async def new_group(session: sessionDep, data:GroupFriendCreate,
         **Returns**
         - The newly group..
         """
-        new_group=create_group_friend(session,data)
+        new_group=create_group_friend(session,data,current_user.id)
         
         return new_group

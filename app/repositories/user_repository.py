@@ -3,7 +3,6 @@ from pydantic import SecretStr
 from sqlmodel import Session,select
 from app.core.enums.rol import Rol
 from app.core.security.hashing import hash_password
-from app.schemas.new_acount import NewAcount
 from app.models.user import User
 from app.models.user_groupf import UserGroupF
 from app.filter.group_filter import UserGroupFilter

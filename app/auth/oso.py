@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF
 from app.auth import group_permissions
+from app.auth.context import RequestContext  
 
 oso = Oso()
 
@@ -12,6 +13,7 @@ def init_oso():
     oso.register_class(User)
     oso.register_class(GroupFriends)
     oso.register_class(UserGroupF)
+    oso.register_class(RequestContext)
 
 
 

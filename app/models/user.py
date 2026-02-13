@@ -13,11 +13,9 @@ class User(SQLModel,table=True):
     username:str = Field(index=True, unique=True)
     email:Optional[EmailStr] = None
     full_name:str
-    #admin:bool=Field(default=False)
     status:Status=Field(default=Status.active)
     hashed_password:str
-    skill: Optional["Skill"] = Relationship(back_populates="user",
-                                            sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    
     games: list["GameTable"] = Relationship(back_populates="user",
                                            sa_relationship_kwargs={"cascade": "all, delete-orphan",
                                                                    "foreign_keys": "[GameTable.user_id]"}

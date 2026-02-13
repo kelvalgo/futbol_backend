@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel,Field,Relationship
 from typing import TYPE_CHECKING
-
+from sqlalchemy import Column, ForeignKey
 from app.core.enums.status_enum import Status
 
 if TYPE_CHECKING:
@@ -14,7 +14,12 @@ class Season(SQLModel, table=True):
     year: int = Field(ge=1900, le=2100)
     is_active: Status = Field(default=Status.active)
 
-    group_id: int = Field(default=None, foreign_key="groupfriends.id")
+    group_id: int = Field(
+    sa_column=Column(
+        ForeignKey("groupfriends.id", ondelete="CASCADE"),
+        nullable=False
+        )
+    )
 
     game_table: list["GameTable"] = Relationship(back_populates="season",
                                             sa_relationship_kwargs={"cascade": "all, delete-orphan"})
