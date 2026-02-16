@@ -9,10 +9,11 @@ from app.schemas.group_friends import GroupFriendCreate
 from fastapi import HTTPException,status
 from app.models.group_friends import GroupFriends
 from app.schemas.user_groupf import UserGroupfCreate
+from app.core.config import settings
 
 def create_group_friend(session:Session, data: GroupFriendCreate,user_id:int)->GroupFriends:
     groups=get_group_of_admin(session,user_id)
-    if len(groups)>2:
+    if len(groups)>settings.LIMIT_GROUPS:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="exceeds the limit of groups"
@@ -33,13 +34,11 @@ def create_group_friend(session:Session, data: GroupFriendCreate,user_id:int)->G
                     date_creation=new_group.date_creation
 
     )
-    print(f"Antes de UserGroupf {user_group}")
     user_gf = UserGroupF(**user_group.model_dump())
-    print(f"dato {user_gf}")
     create_user_groupf(session,user_gf)   
     session.commit()
 
-    return group
+    return {"message": "Acount created successfully"}
 
 
 

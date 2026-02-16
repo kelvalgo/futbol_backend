@@ -1,22 +1,15 @@
-from datetime import datetime
-from fastapi import APIRouter,Depends,HTTPException, Query,status
-from pydantic import SecretStr
+from fastapi import APIRouter,Depends,HTTPException,status
 from app.auth.context import RequestContext
-from app.core.enums.rol import Rol
-from app.core.security.hashing import hash_password
 from app.models.group_friends import GroupFriends
-from app.models.skill import  Skill
 from app.db.db import sessionDep
-from sqlmodel import select
 from app.core.security.security import get_current_user
 from app.models.user import User
-from app.schemas.group_friends import GroupFriendCreate, GroupFriendRead, GroupFriendsBase
+from app.schemas.group_friends import GroupFriendCreate, GroupFriendRead
+from app.schemas.new_password import NewPassword
 from app.schemas.user import UserCreate, UserRead,NewAcount
-from app.models.user_groupf import UserGroupF
 from app.services.groupf_service import create_group_friend
-from app.services.user_service import create_new_password, create_relation_user_groupf, list_users_of_group,create_users_by_group,create_new_acount
+from app.services.user_service import create_new_password,list_users_of_group,create_users_by_group,create_new_acount
 from app.filter.group_filter import UserGroupFilter
-from app.filter.pagination import Pagination
 from app.core.enums.auth_results import AuthResult
 
 
@@ -65,7 +58,7 @@ async def list_user(
 
 
 
-@router.post("/id_group/{id_group}/",response_model=UserRead,
+@router.post("/id_group/{id_group}/",
                status_code=status.HTTP_201_CREATED)
 async def create_user(
     session: sessionDep,
@@ -98,15 +91,14 @@ async def create_user(
             detail=AuthResult.FORBIDDEN.value
         )
 
-    new_user=create_users_by_group(session,user_in,id_group)
-    return new_user
+    message=create_users_by_group(session,user_in,id_group)
+    return message
 
 
-@router.put("/new_password",
-            response_model=UserRead,
+@router.post("/change-password",
             status_code=status.HTTP_200_OK)
 async def new_password(
-    new_pass:SecretStr,
+    data:NewPassword,
     session: sessionDep,
     current_user: User = Depends(get_current_user)
 ):  
@@ -118,15 +110,16 @@ async def new_password(
     - User logged.
 
     **Parameters**
-    - **new_pass**: new password.
+    - **data**: new_password.
 
     **Returns**
     - The user.
   """
-  user=create_new_password(session,current_user,new_pass) 
-  return user
+  message=create_new_password(session,current_user,data) 
+  return message
 
-@router.post("/new_count",response_model=UserRead,
+
+@router.post("/new_count",
              status_code=status.HTTP_201_CREATED)
 async def new_account(session: sessionDep, data:NewAcount):
         
@@ -142,28 +135,5 @@ async def new_account(session: sessionDep, data:NewAcount):
         **Returns**
         - The newly account.
         """
-        count=create_new_acount(session,data)
-        return count
-
-
-@router.post("/new_group",response_model=GroupFriendRead,
-             status_code=status.HTTP_201_CREATED)
-async def new_group(session: sessionDep,
-                    data:GroupFriendCreate,   
-                    current_user: User = Depends(get_current_user)):
-      
-        """
-        new group.
-
-        **Permissions**
-        - User logged.
-
-        **Parameters**
-        - **data**: Group.
-
-        **Returns**
-        - The newly group..
-        """
-        new_group=create_group_friend(session,data,current_user.id)
-        
-        return new_group
+        message=create_new_acount(session,data)
+        return message

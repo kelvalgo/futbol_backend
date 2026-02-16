@@ -1,14 +1,17 @@
-from dotenv import load_dotenv
-import os
+from pydantic_settings import BaseSettings
 
-_ = load_dotenv()
+class Settings(BaseSettings):
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int (os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"),30)
+    JWT_SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    PERIODING_DONATION:int
+    LIMIT_GROUPS:int
 
-if not JWT_SECRET_KEY:
-    raise RuntimeError("JWT_SECRET_KEY no configurada")
+    class Config:
+        env_file = ".env"
+
+settings = Settings()
 
 
 

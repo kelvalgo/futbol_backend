@@ -1,6 +1,5 @@
 from datetime import datetime
 from fastapi import HTTPException
-from pydantic import SecretStr
 from sqlalchemy import select
 from sqlmodel import Session
 from app.core.enums.rol import Rol
@@ -9,10 +8,11 @@ from app.models.user import User
 from app.models.user_groupf import UserGroupF
 from app.repositories.user_repository import create_acount, create_user, create_user_groupf, get_user_by_username, get_users_by_group, new_password
 from app.filter.group_filter import UserGroupFilter
+from app.routers.auth import autenticate_user
+from app.schemas.new_password import NewPassword
 from app.schemas.user import UserCreate,NewAcount
 from fastapi import HTTPException,status
 from app.core.enums.status_enum import Status
-
 from app.schemas.user_groupf import UserGroupfCreate
 
 
@@ -29,7 +29,7 @@ def create_users_by_group(
     session: Session,
     user_in: UserCreate,
     id_group:int,
-) -> User:
+):
 
     existing_user = get_user_by_username(session, user_in.username)
     if existing_user:
@@ -45,12 +45,7 @@ def create_users_by_group(
          status=Status.active            
         )    
     
-
-    '''
-    user_new = User(**user_in.model_dump())
-    user_new.hashed_password = hash_password("Inicio")  
-    '''
-    new_user.hashed_password = hash_password("Inicio")  
+    new_user.hashed_password = hash_password(user_in.username)  
 
     new_user=create_user(session,new_user)
     session.flush()
@@ -65,10 +60,11 @@ def create_users_by_group(
     print(f"dato: {user_gf}")
     create_relation_user_groupf(session,user_gf)
     session.commit()
-    return  new_user
+    return  {"message": "User created successfully"}
 
 def create_relation_user_groupf(session: Session,user_group:UserGroupF)->None:
      create_user_groupf(session,user_group)
+
 
 def create_new_acount(session: Session,new_count:NewAcount):
 
@@ -91,9 +87,14 @@ def create_new_acount(session: Session,new_count:NewAcount):
             detail="Username already exists"
         )        
 
-    return count
-   
-def create_new_password(session:Session,user:User,new_pass:SecretStr)->User:
-    userpass=new_password(session,user,new_pass.get_secret_value())
+    return {"message": "Acount created successfully"}
+  
+def create_new_password(session:Session,user:User,data:NewPassword):
+    if not autenticate_user(user.username,data.current_password.get_secret_value(),session):
+         raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect"
+        )
+    new_password(session,user,data.new_password.get_secret_value())
     session.commit()
-    return userpass
+    return {"message": "Password updated successfully"}
