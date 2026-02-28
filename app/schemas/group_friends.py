@@ -27,9 +27,9 @@ class GroupFriendReadDonation(GroupFriendsBase):
     last_date_donation: Optional[str] = None
     perioding_donation:int = Field(default=30)  # días
     is_active: Status = Field(default=Status.active)    
-    date_creation:str=None
+    date_creation:str | None =None
 
 class GroupFriendRead(GroupFriendsBase):
     id:int    
     is_active: Status = Field(default=Status.active)    
-    date_creation:str=None
+    date_creation:str | None =None

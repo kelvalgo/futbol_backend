@@ -1,19 +1,20 @@
-from sqlmodel import Session, select
+from sqlmodel import select
+from app.core.enums.invitationStatus import InvitationStatus
 from app.auth.context import RequestContext
 from app.core.enums.rol import Rol
-from app.db.db import engine
-from app.models.group_friends import GroupFriends
 from app.models.user import User
+from app.models.group_invitation import GroupInvitation
 from app.models.user_groupf import UserGroupF
 from app.core.enums.status_enum import Status
+from app.filter.group_filter import Group
+from app.filter.invitation_filter import Invitation
 
-
-def is_member_of_group(ctx: RequestContext, groupf: GroupFriends) -> bool:
+def is_member_of_group(ctx: RequestContext, groupf: Group) -> bool:
      session=ctx.db
      try:
             statement = select(UserGroupF).where(
                 UserGroupF.user_id == ctx.user.id,
-                UserGroupF.group_id == groupf.id,
+                UserGroupF.group_id == groupf.id_group,
             )
            
             result = session.exec(statement).first()
@@ -22,29 +23,13 @@ def is_member_of_group(ctx: RequestContext, groupf: GroupFriends) -> bool:
      except Exception as e:
             print(f"Error in validation Oso: {e}")
             return False
-
-'''
-    with Session(engine) as session:
-        try:
-            statement = select(UserGroupF).where(
-                UserGroupF.user_id == user.id,
-                UserGroupF.group_id == groupf.id,
-            )
-           
-            result = session.exec(statement).first()
-            
-            return result is not None 
-        except Exception as e:
-            print(f"Error in validation Oso: {e}")
-            return False
-'''        
-        
-def is_admin_of_group(ctx: RequestContext, groupf: GroupFriends) -> bool:
+         
+def is_admin_of_group(ctx: RequestContext, groupf: Group) -> bool:
     session=ctx.db
     try:
             statement = select(UserGroupF).where(
                 UserGroupF.user_id ==  ctx.user.id,
-                UserGroupF.group_id == groupf.id,
+                UserGroupF.group_id == groupf.id_group,
                 UserGroupF.rol==Rol.admin
             )
            
@@ -84,16 +69,18 @@ def is_user_active(ctx: RequestContext) -> bool:
     except Exception as e:
             print(f"Error in validation Oso: {e}")
             return False
-
-    '''
-    with Session(engine) as session:
-        try:
-            statement=select(User.status).where(
-            User.id==user.id
+ 
+    
+def has_pending_invitation(ctx:RequestContext, invitation:Invitation) -> bool:
+    session=ctx.db
+    try:
+            statement=select(GroupInvitation.status).where(
+            GroupInvitation.id==invitation.invitation_id,GroupInvitation.invited_user_id==invitation.invited_user_id,
+            GroupInvitation.status==InvitationStatus.pending
             )
             status=session.exec(statement).first()
-            return status==Status.active
-        except Exception as e:
+            return status==InvitationStatus.pending
+    except Exception as e:
             print(f"Error in validation Oso: {e}")
             return False
-    '''
+    pass    

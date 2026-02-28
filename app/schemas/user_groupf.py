@@ -23,3 +23,8 @@ class UserGroupfUpdatePatch (UserGroupf):
 
 class UserGroupfRead(UserGroupf):
     id:int
+
+class UserWithGroupRead(BaseModel):
+    user_id: int
+    user_name: str
+    group_name: str    

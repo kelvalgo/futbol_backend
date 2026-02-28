@@ -4,7 +4,7 @@ from app.core.enums.position_enum import PositionEnum
 
 class SkillBase(BaseModel):
     position:PositionEnum  | None = Field(default=None)
-    spatial_condition:bool = None
+    spatial_condition:bool | None = None
     gk : float | None=Field(default=None,ge=0, le=5)
     df : float | None=Field(default=None,ge=0, le=5)
     mf : float | None=Field(default=None,ge=0, le=5)
@@ -29,5 +29,5 @@ class SkillUpdatePatch (SkillBase):
 
 class SkillRead(SkillBase):
     id:int
-    user_id: int = None
+    user_id: int | None= None
     

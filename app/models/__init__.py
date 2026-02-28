@@ -7,3 +7,4 @@ from app.models.donation import Donation
 from app.models.group_friends import GroupFriends
 from app.models.match_player import MatchPlayer
 from app.models.user_groupf import UserGroupF
+from app.models.group_invitation import GroupInvitation

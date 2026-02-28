@@ -4,15 +4,15 @@ from typing import Optional
 from app.core.enums.status_enum import Status
 
 class UserBase(BaseModel):
-    username:str = None
+    username:str | None = None
     email:Optional[EmailStr] = None
-    full_name:str = None
+    full_name:str | None = None
     status:Status = Field(default=Status.active)
 
 class UserCreate (BaseModel):  
-    username:str = None
+    username:str | None = None
     email:Optional[EmailStr] = None
-    full_name:str = None
+    full_name:str | None = None
 
 
 class UserUpdatePut (BaseModel):  
@@ -20,7 +20,6 @@ class UserUpdatePut (BaseModel):
     username:str
     email:Optional[EmailStr]
     full_name:str 
-    #admin:bool 
     status:Status
 
 class UserUpdatePatch (UserBase):  

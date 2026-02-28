@@ -1,14 +1,10 @@
-from fastapi import APIRouter,Depends,HTTPException, Query,status
-from app.models.group_friends import GroupFriends
-from app.models.skill import  Skill
+from fastapi import APIRouter,Depends,HTTPException,status
 from app.db.db import sessionDep
-from sqlmodel import select
 from app.core.security.security import get_current_user
 from app.models.user import User
 from app.schemas.user import UserRead
 from app.services.user_service import list_users_of_group
-from app.filter.group_filter import UserGroupFilter
-from app.filter.pagination import Pagination
+from app.filter.user_group_filter import UserGroupFilter
 
 
 from oso import Oso

@@ -6,14 +6,16 @@ from app.core.enums.rol import Rol
 from app.core.security.hashing import hash_password
 from app.models.user import User
 from app.models.user_groupf import UserGroupF
-from app.repositories.user_repository import create_acount, create_user, create_user_groupf, get_user_by_username, get_users_by_group, new_password
-from app.filter.group_filter import UserGroupFilter
+from app.repositories.user_repository import create_acount, create_user,get_user_by_username, get_users, get_users_by_group, new_password
+from app.repositories.user_groupf_repositoy import create_user_groupf
+from app.filter.user_group_filter import UserGroupFilter
 from app.routers.auth import autenticate_user
 from app.schemas.new_password import NewPassword
 from app.schemas.user import UserCreate,NewAcount
 from fastapi import HTTPException,status
 from app.core.enums.status_enum import Status
-from app.schemas.user_groupf import UserGroupfCreate
+from app.schemas.user_groupf import UserGroupfCreate,UserWithGroupRead
+
 
 
 def list_users_of_group(
@@ -24,6 +26,24 @@ def list_users_of_group(
     
     return get_users_by_group(session,group_id,param) 
 
+def list_users(
+    session: Session,    
+    group_id:int,
+    param: UserGroupFilter,
+    )->list[UserWithGroupRead]:   
+
+    users=get_users(session,group_id,param) 
+
+    userwithgroup=[
+                UserWithGroupRead(
+                        user_id=id,
+                        user_name=username,
+                        group_name=name
+                )
+                for id, username, name in users
+                ]
+    
+    return userwithgroup
 
 def create_users_by_group(
     session: Session,
@@ -57,7 +77,6 @@ def create_users_by_group(
                     date_creation=datetime.now().strftime("%Y-%m-%d")
                     )    
     user_gf = UserGroupF(**usergf.model_dump())
-    print(f"dato: {user_gf}")
     create_relation_user_groupf(session,user_gf)
     session.commit()
     return  {"message": "User created successfully"}
