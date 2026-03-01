@@ -10,7 +10,7 @@ from app.core.enums.invitationStatus import InvitationStatus
 from app.filter.invitation_filter import InvitationFilter, Invitationsend
 from app.models.group_invitation import GroupInvitation
 from app.repositories.group_invitation_repository import exists_invitation, create_inivitation, list_invitation, list_invitation_send, rejected_invitation
-from app.schemas.group_invitation import GroupInvitationCreate, GroupInvitationRead
+from app.schemas.group_invitation import GroupInvitationCreate, GroupInvitationRead, GroupInvitationReadSend
 from app.repositories.group_invitation_repository import  get_invitation, accept_inivitation
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.enums.rol import Rol
@@ -42,9 +42,9 @@ def get_list_invitacion(session:Session,status:InvitationStatus,current_user:int
         param=InvitationFilter(invited_user_id=current_user)
         return list_invitation(session,status,param)
 
-def get_list_invitacion_send(session:Session,status:InvitationStatus,current_user:int)->list[GroupInvitationRead]:
+def get_list_invitacion_send(session:Session,status:InvitationStatus,current_user:int)->list[GroupInvitationReadSend]:
         param=Invitationsend(invited_by_user_id=current_user)
-        return list_invitation(session,status,param)
+        return list_invitation_send(session,status,param)
         
 def reject_invitations(session:Session,id_invitation:int):
 

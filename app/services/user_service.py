@@ -2,6 +2,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlmodel import Session
+from app.schemas.group_friends import GroupFriendRead
 from app.core.enums.rol import Rol
 from app.core.security.hashing import hash_password
 from app.models.user import User
@@ -11,7 +12,7 @@ from app.repositories.user_groupf_repositoy import create_user_groupf
 from app.filter.user_group_filter import UserGroupFilter
 from app.routers.auth import autenticate_user
 from app.schemas.new_password import NewPassword
-from app.schemas.user import UserCreate,NewAcount
+from app.schemas.user import UserCreate,NewAcount, UserRead
 from fastapi import HTTPException,status
 from app.core.enums.status_enum import Status
 from app.schemas.user_groupf import UserGroupfCreate,UserWithGroupRead
@@ -22,9 +23,20 @@ def list_users_of_group(
     session: Session,
     group_id:int,
     param: UserGroupFilter,
-    ):   
-    
-    return get_users_by_group(session,group_id,param) 
+    )->list[UserRead]: 
+
+
+    result =  get_users_by_group(session,group_id,param) 
+    userbygroup=[UserRead(
+            id=row.id,
+            username=row.username,
+            full_name=row.full_name,
+            disable=row.disable
+            )
+        for row in result
+        ]
+   
+    return userbygroup 
 
 def list_users(
     session: Session,    

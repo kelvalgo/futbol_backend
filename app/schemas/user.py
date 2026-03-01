@@ -27,7 +27,9 @@ class UserUpdatePatch (UserBase):
 
 class UserRead(UserBase):
     id:int
-
+    username:str
+    full_name:str 
+    
 class NewAcount(BaseModel):
     username:str
     full_name:str

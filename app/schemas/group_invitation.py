@@ -11,7 +11,17 @@ class GroupInvitationCreate(BaseModel):
     invited_by_user_id: int
     InvitationStatus.pending
 
+
 class GroupInvitationRead(BaseModel):    
     id: int 
     status: InvitationStatus
-    group_name: str
+    invited_by_group_name: str
+    invited_by_username:str
+    invited_by_userfullname:str
+
+class GroupInvitationReadSend(BaseModel):    
+    id: int 
+    status: InvitationStatus
+    invited_by_group_name: str
+    invited_username:str
+    invited_userfullname:str

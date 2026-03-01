@@ -40,13 +40,13 @@ def create_group_friend(session:Session, data: GroupFriendCreate,user_id:int)->G
     create_user_groupf(session,user_gf)   
     session.commit()
 
-    return {"message": "Acount created successfully"}
+    return {"message": "Group created successfully"}
 
 
 def list_groups(session:Session,userf:UserFilter,group_disable:bool):
 
     list_groups=get_list_groups(session,userf,group_disable)
-    groups_response = [GroupFriendRead(id=g.id, name=g.name,description=g.description,date_creation=g.date_creation,is_active=g.is_active) for g in list_groups]
+    groups_response = [GroupFriendRead(group_id=g.id, name=g.name,description=g.description,date_creation=g.date_creation,group_is_active=g.is_active,user_rol=g.rol,user_disable=g.disable) for g in list_groups]
  
     return groups_response
     

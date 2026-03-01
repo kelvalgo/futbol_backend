@@ -12,7 +12,7 @@ from fastapi import APIRouter
 from oso import Oso
 from app.auth.oso import get_oso
 from app.models.user import User
-from app.schemas.group_invitation import GroupInvitation, GroupInvitationCreate, GroupInvitationRead
+from app.schemas.group_invitation import GroupInvitation, GroupInvitationCreate, GroupInvitationRead, GroupInvitationReadSend
 from app.services.group_invitation_service import accept_invitations, create_invitations, get_list_invitacion, get_list_invitacion_send, reject_invitations
 import oso
 
@@ -82,7 +82,7 @@ async def list_invitation_received(
     return get_list_invitacion(session,status,current_user.id)
 
 
-@router.get("/list_invitation/send",response_model=list[GroupInvitationRead],
+@router.get("/list_invitation/send",response_model=list[GroupInvitationReadSend],
                status_code=status.HTTP_200_OK)
 async def list_invitation_send(    
     session: sessionDep,
