@@ -60,8 +60,27 @@ allow(ctx: RequestContext, "get_list_groups", _user: RequestContext) if
     group_permissions.is_user_active(ctx); 
 
 allow(ctx: RequestContext, "new_group", _user: RequestContext) if
-    group_permissions.is_user_active(ctx);     
+    group_permissions.is_user_active(ctx);
 
+allow(ctx: RequestContext, "list_skill", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+    (
+        group_permissions.is_member_of_group(ctx, groupf) or
+        group_permissions.is_admin_of_group(ctx, groupf)
+    );
+
+
+allow(ctx: RequestContext, "create_skill", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+        (           
+            group_permissions.is_admin_of_group(ctx, groupf)
+        );
+
+allow(ctx: RequestContext, "update_skill", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+        (           
+            group_permissions.is_admin_of_group(ctx, groupf)
+        );        
 
     
  

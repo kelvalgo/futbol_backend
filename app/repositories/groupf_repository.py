@@ -1,6 +1,5 @@
 from sqlmodel import Session
 from app.filter.user_filter import UserFilter
-from app.models.user import User
 from app.core.enums.rol import Rol
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF

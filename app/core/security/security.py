@@ -36,3 +36,4 @@ def check_admin(user:User=Depends(get_current_user)):
     if not user.admin:
         raise  HTTPException(status_code=403, detail="insufficient permissions") 
     return user
+    

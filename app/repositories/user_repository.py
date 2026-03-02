@@ -13,8 +13,13 @@ from app.schemas.user_groupf import UserWithGroupRead
 
 def get_users_by_group(session:Session,group_id:int,param:UserGroupFilter):
 
-    statement=select(User.id,User.username,User.full_name,UserGroupF.disable).join(UserGroupF,UserGroupF.user_id==User.id).where(UserGroupF.group_id==group_id,User.status==param.status).offset(param.skip).limit(param.limit)
-    
+    statement=(select(
+           User.id,User.username,User.full_name,UserGroupF.disable)
+            .join(UserGroupF,UserGroupF.user_id==User.id)
+            .where(UserGroupF.group_id==group_id,User.status==param.status)
+            .offset(param.skip).limit(param.limit)
+        )
+        
     return session.exec(statement).all()  
 
 def get_users(session:Session,group_id:int,param:UserGroupFilter):  

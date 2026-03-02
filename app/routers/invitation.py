@@ -14,7 +14,7 @@ from app.auth.oso import get_oso
 from app.models.user import User
 from app.schemas.group_invitation import GroupInvitation, GroupInvitationCreate, GroupInvitationRead, GroupInvitationReadSend
 from app.services.group_invitation_service import accept_invitations, create_invitations, get_list_invitacion, get_list_invitacion_send, reject_invitations
-import oso
+
 
 
 router=APIRouter(prefix="/invitations", tags=["Invitations"])
