@@ -18,8 +18,9 @@ class UserGroupfCreate (UserGroupf):
 class UserGroupfUpdatePut (BaseModel): 
     pass
 
-class UserGroupfUpdatePatch (UserGroupf):  
-    id:int    
+class UserGroupfUpdatePatch (BaseModel):  
+   rol: Optional[Rol]= None
+   disable:Optional[bool]= None    
 
 class UserGroupfRead(UserGroupf):
     id:int
@@ -27,4 +28,11 @@ class UserGroupfRead(UserGroupf):
 class UserWithGroupRead(BaseModel):
     user_id: int
     user_name: str
-    group_name: str    
+    user_full_name:str
+    
+
+
+ 
+                
+       
+                       

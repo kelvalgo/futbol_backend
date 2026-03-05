@@ -3,9 +3,9 @@ from app.models.user import User
 from app.models.group_friends import GroupFriends
 from app.models.user_groupf import UserGroupF
 from app.models.skill import Skill
-from app.schemas.user_group_bulk_filter import UserGroupBulkFilter
+from app.filter.user_group_filter import UserGroupFilter
 
-def list_skill(session:Session,group_id:int,param:UserGroupBulkFilter):
+def list_skill(session:Session,group_id:int,param:UserGroupFilter):
     
     statement = (
         select(Skill, User.username, User.id)
@@ -14,7 +14,7 @@ def list_skill(session:Session,group_id:int,param:UserGroupBulkFilter):
         .join(GroupFriends, GroupFriends.id == UserGroupF.group_id)
         .where(
             GroupFriends.id == group_id,
-            UserGroupF.disable == param.user_disabled
+            UserGroupF.disable == param.disabled
         )
         .order_by(User.username)
         .offset(param.skip)

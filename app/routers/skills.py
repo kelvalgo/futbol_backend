@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends,HTTPException,status
 from app.services.skill_service import list_user_skill,create_skill_service, update_skill_service
 from app.filter.group_filter import Group
 from app.core.enums.auth_results import AuthResult
-from app.schemas.user_group_bulk_filter import UserGroupBulkFilter
+from app.filter.user_group_filter import UserGroupFilter
 from app.db.db import sessionDep
 from sqlmodel import select
 from app.core.security.security import get_current_user
@@ -24,7 +24,7 @@ router=APIRouter(prefix="/skill", tags=["Skill"])
 async def list_skill(
     session: sessionDep,
     id_group:int,
-    param:UserGroupBulkFilter= Depends(),
+    param:UserGroupFilter= Depends(),
     current_user: User = Depends(get_current_user),
     oso:Oso=Depends(get_oso)
 ):
@@ -51,7 +51,7 @@ async def list_skill(
 
     return users_skill
 
-@router.post("/id_group/{id_group}/",
+@router.post("/id_group/{id_group}/internal",
              status_code=status.HTTP_201_CREATED)
 def create_skill(session: sessionDep,
                  id_group:int,
@@ -92,7 +92,7 @@ def create_skill(session: sessionDep,
     return  create_skill_service(session,id_group,users_skills)
     
 
-@router.patch("/",
+@router.patch("/id_group/{id_group}/internal",
     status_code=status.HTTP_200_OK
 )
 def update_skill(session: sessionDep,

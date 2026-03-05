@@ -24,6 +24,7 @@ def list_users_of_group(
     group_id:int,
     param: UserGroupFilter,
     )->list[UserRead]: 
+     
 
 
     result =  get_users_by_group(session,group_id,param) 
@@ -31,10 +32,12 @@ def list_users_of_group(
             id=row.id,
             username=row.username,
             full_name=row.full_name,
-            disable=row.disable
+            email=row.email,
+            user_rol=row.rol,
+            user_status=row.status,
+            user_disable_group=row.disable
             )
-        for row in result
-        ]
+         for row in result]
    
     return userbygroup 
 
@@ -46,13 +49,16 @@ def list_users(
 
     users=get_users(session,group_id,param) 
 
+ 
+
     userwithgroup=[
                 UserWithGroupRead(
-                        user_id=id,
-                        user_name=username,
-                        group_name=name
+                        user_id=row.id,
+                        user_name=row.username,
+                        user_full_name=row.full_name,
+                       
                 )
-                for id, username, name in users
+                for row in users
                 ]
     
     return userwithgroup

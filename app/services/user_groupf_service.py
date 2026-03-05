@@ -1,9 +1,10 @@
 from datetime import datetime
+from app.filter.user_group_filter import UserGroupFilter
 from app.core.enums.rol import Rol
 from app.models.user_groupf import UserGroupF
 from sqlmodel import Session
-from app.repositories.user_groupf_repositoy import create_user_groupf
-from app.schemas.user_groupf import UserGroupfCreate
+from app.repositories.user_groupf_repositoy import create_user_groupf,update_usergroupf
+from app.schemas.user_groupf import UserGroupfCreate, UserGroupfUpdatePatch
 from app.core.enums.rol import Rol
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.group_invitation import GroupInvitation
@@ -31,4 +32,12 @@ def create_usergroupf(session:Session,usergrup:UserGroupfCreate)->bool:
         session.rollback()
     return False
 
+def  update_usergroupf_service(session:Session,data: tuple,param:UserGroupfUpdatePatch):
+    try:
+        update_usergroupf(session,data,param)
+        session.commit()
+        return  {"message": "user update successfully"}  
+    except SQLAlchemyError:
+        session.rollback()
+        return False    
  

@@ -25,10 +25,15 @@ class UserUpdatePut (BaseModel):
 class UserUpdatePatch (UserBase):  
     id:int    
 
-class UserRead(UserBase):
+class UserRead(BaseModel):
     id:int
     username:str
     full_name:str 
+    email:Optional[EmailStr]
+    user_rol:str
+    user_status:str
+    user_disable_group:bool
+
     
 class NewAcount(BaseModel):
     username:str

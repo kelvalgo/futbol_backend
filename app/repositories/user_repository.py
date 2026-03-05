@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import SecretStr
+from sqlalchemy import exists
 from sqlmodel import Session,select
 from app.schemas.user import UserRead
 from app.core.enums.rol import Rol
@@ -14,9 +15,9 @@ from app.schemas.user_groupf import UserWithGroupRead
 def get_users_by_group(session:Session,group_id:int,param:UserGroupFilter):
 
     statement=(select(
-           User.id,User.username,User.full_name,UserGroupF.disable)
+           User.id,User.username,User.full_name,User.email,UserGroupF.rol,User.status,UserGroupF.disable)
             .join(UserGroupF,UserGroupF.user_id==User.id)
-            .where(UserGroupF.group_id==group_id,User.status==param.status)
+            .where(UserGroupF.group_id==group_id,UserGroupF.disable==param.disabled)
             .offset(param.skip).limit(param.limit)
         )
         
@@ -24,16 +25,43 @@ def get_users_by_group(session:Session,group_id:int,param:UserGroupFilter):
 
 def get_users(session:Session,group_id:int,param:UserGroupFilter):  
 
-       statement = (
-        select(User.id, User.username, GroupFriends.name)
+    
+         
+    subquery = (
+    select(1)
+    .where(
+        UserGroupF.user_id == User.id,
+        UserGroupF.group_id == group_id,
+        UserGroupF.disable == False
+    )
+    .correlate(User)   # 👈 CLAVE
+    )
+
+
+    statement = (
+    select(
+        User.id,
+        User.username,
+        User.full_name
+    )
+    .where(~exists(subquery))
+    .order_by(User.username)
+    .offset(param.skip)
+    .limit(param.limit)
+    )
+  
+    '''  
+    statement = (
+        select(User.id, User.username,User.full_name, GroupFriends.name.label("group_name"),UserGroupF.disable.label("user_disable_group"),
+               UserGroupF.rol.label("user_rol"))
         .join(UserGroupF, UserGroupF.user_id == User.id)
         .join(GroupFriends, GroupFriends.id == UserGroupF.group_id)
-        .where(GroupFriends.id != group_id,UserGroupF.disable==False)
+        .where(GroupFriends.id != group_id,UserGroupF.disable==param.disabled)
         ).order_by(GroupFriends.name) .offset(param.skip).limit(param.limit)
-       
-       users=session.exec(statement).all()      
+    '''
 
-       return  users
+    users = session.exec(statement).all() 
+    return  users
 
 def get_user_by_username(session: Session, username: str) -> User | None:
 

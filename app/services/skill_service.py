@@ -2,11 +2,11 @@ from sqlmodel import Session
 from app.repositories.skill_repository import create_skills, update_skills
 from app.schemas.skill import SkillCreate, SkillRead, SkillUpdatePatch
 from app.repositories.skill_user_group_repository import list_skill
-from app.schemas import user_group_bulk_filter
+from app.filter.user_group_filter import UserGroupFilter
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def list_user_skill (session:Session,group_id:int,param:user_group_bulk_filter)->SkillRead:
+def list_user_skill (session:Session,group_id:int,param:UserGroupFilter)->SkillRead:
         
     skills = list_skill(session, group_id, param)
 

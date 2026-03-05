@@ -23,7 +23,7 @@ router=APIRouter(prefix="/user", tags=["User"])
 
 @router.get("/me/id_group/{id_group}/",response_model=list[UserRead],
                status_code=status.HTTP_200_OK)
-async def list_user_group(    
+async def list_user_data(    
     session: sessionDep,
     id_group: int,
     param:UserGroupFilter = Depends(),
@@ -57,7 +57,7 @@ async def list_user_group(
     group = Group(id_group=id_group)
     context=RequestContext(current_user, session)
     
-    if not oso.is_allowed(context, "list_user_group", group):
+    if not oso.is_allowed(context, "list_user_data", group):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail=AuthResult.FORBIDDEN.value
@@ -114,7 +114,7 @@ async def list_user(
 
 
 
-@router.post("/id_group/{id_group}/",
+@router.post("/id_group/{id_group}/internal",
                status_code=status.HTTP_201_CREATED)
 async def create_user(
     session: sessionDep,

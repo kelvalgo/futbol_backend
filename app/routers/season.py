@@ -1,22 +1,43 @@
 from fastapi import APIRouter,Depends,HTTPException,status
+from app.filter.season_filter import SeasonFilter
+from app.filter.group_filter import Group
+from app.services.season_services import list_season_services
 from app.db.db import sessionDep
 from sqlmodel import select
-from app.core.security.security import check_admin
+from app.core.security.security import check_admin, get_current_user
 from app.models.user import User
 from app.models.season import Season
 from app.schemas.season import SeasonRead,SeasonCreate,SeasonUpdatePut,SeasonUpdatePatch
+from app.auth.context import RequestContext
+from oso import Oso
+from app.auth.oso import get_oso
+from app.core.enums.auth_results import AuthResult
+
+router=APIRouter(prefix="/season", tags=["Season"])
 
 
-router=APIRouter(prefix="/season", tags=["Admin - Season"])
-
-
-@router.get("/",response_model=list[SeasonRead], 
+@router.get("/id_group/{id_group}",response_model=list[SeasonRead], 
             status_code=status.HTTP_200_OK)
-async def list_season_table(
+async def list_season(
     session: sessionDep,
-    current_user: User = Depends(check_admin)
+    id_group:int,
+    param:SeasonFilter= Depends(),
+    current_user: User = Depends(get_current_user),
+    oso:Oso=Depends(get_oso)
 ):
-    return session.exec(select(Season)).all()
+    
+
+    group = Group(id_group=id_group)
+    context=RequestContext(current_user, session)
+    if not oso.is_allowed(context,"list_season",group):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail=AuthResult.FORBIDDEN.value
+        )
+    
+
+
+    return   list_season_services(session,id_group,param)
 
 
 @router.post("/",response_model=SeasonRead,
@@ -82,7 +103,7 @@ def update_season_put(
 def update_season_patch(
     season_in: SeasonUpdatePatch,
     session: sessionDep,
-    current_user: User = Depends(check_admin)
+    current_user: User = Depends(get_current_user)
 ):
     season = session.get(Season, season_in.id)
     if not season:
