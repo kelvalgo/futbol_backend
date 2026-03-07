@@ -30,7 +30,10 @@ def create_usergroupf(session:Session,usergrup:UserGroupfCreate)->bool:
         return True
     except SQLAlchemyError:
         session.rollback()
-    return False
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        )
 
 def  update_usergroupf_service(session:Session,data: tuple,param:UserGroupfUpdatePatch):
     try:
@@ -39,5 +42,8 @@ def  update_usergroupf_service(session:Session,data: tuple,param:UserGroupfUpdat
         return  {"message": "user update successfully"}  
     except SQLAlchemyError:
         session.rollback()
-        return False    
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        ) 
  

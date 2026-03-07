@@ -1,23 +1,24 @@
+from typing import Optional
+
 from pydantic import BaseModel,Field
+
+from app.core.enums.status_enum import Status
 
 
 class SeasonBase(BaseModel):
     name: str = None # “Opening 2026”, “Closing 2026”
     year:int | None = Field(ge=1900, le=2100)
-    is_active: bool  | None = Field(default=True)
+    is_active:Status
 
  
-class SeasonCreate (SeasonBase):  
-    pass
+class SeasonCreate (BaseModel):  
+    name: str = None # “Opening 2026”, “Closing 2026”  
 
-class SeasonUpdatePut (BaseModel):  
-    id:int
-    name: str  # “Opening 2026”, “Closing 2026”
-    year:int = Field(ge=1900, le=2100)
-    is_active: bool   = Field(default=True)
 
-class SeasonUpdatePatch (SeasonBase):  
-    id:int
+
+class SeasonUpdatePatch (BaseModel): 
+    name:  Optional[str]=None  # “Opening 2026”, “Closing 2026”
+    is_active:Optional[Status]=None
 
 class SeasonRead(SeasonBase):
     id:int

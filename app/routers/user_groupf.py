@@ -17,8 +17,6 @@ router=APIRouter(prefix="/user_groupf", tags=["UserGroupf"])
     status_code=status.HTTP_200_OK
 )
 
-
-
 def update_usergroupf(session: sessionDep,
                  group_id: int,
                  user_id: int,

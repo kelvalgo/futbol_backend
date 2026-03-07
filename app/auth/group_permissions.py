@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlmodel import select
 from app.core.enums.invitationStatus import InvitationStatus
 from app.auth.context import RequestContext
@@ -8,6 +10,7 @@ from app.models.user_groupf import UserGroupF
 from app.core.enums.status_enum import Status
 from app.filter.group_filter import Group
 from app.filter.invitation_filter import Invitation
+from app.models.season import Season
 
 def is_member_of_group(ctx: RequestContext, groupf: Group) -> bool:
      session=ctx.db
@@ -83,4 +86,44 @@ def has_pending_invitation(ctx:RequestContext, invitation:Invitation) -> bool:
     except Exception as e:
             print(f"Error in validation Oso: {e}")
             return False
-    pass    
+
+def has_activate_season (ctx:RequestContext, groupf: Group) -> bool:  
+        session=ctx.db
+
+        try:
+            statement = select(Season.id).where(
+                Season.group_id == groupf.id_group,
+                Season.is_active == Status.active
+            )
+
+            season = session.exec(statement).first()
+            if season:
+                  return False
+            #True  -> no hay temporada activa -> permitir
+            #False -> hay temporada activa -> bloquear
+            return season is None
+
+        except Exception as e:
+            print(f"Error in validation Oso: {e}")
+            return False
+        
+
+def has_season (ctx:RequestContext, groupf: Group) -> bool:  
+        session=ctx.db
+
+        try:
+            statement = select(Season.id).where(
+                Season.group_id == groupf.id_group
+            )
+
+            season = session.exec(statement).first()
+            if season:
+                  return False
+            #True  -> no hay temporada activa -> permitir
+            #False -> hay temporada activa -> bloquear
+            return season is None
+
+        except Exception as e:
+            print(f"Error in validation Oso: {e}")
+            return False        
+       

@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlmodel import Session
 from app.repositories.skill_repository import create_skills, update_skills
 from app.schemas.skill import SkillCreate, SkillRead, SkillUpdatePatch
@@ -40,7 +41,10 @@ def create_skill_service(session:Session,group_id:int,param:list[SkillCreate]):
         return  {"message": "Skills create successfully"}  
     except SQLAlchemyError:
         session.rollback()
-        return False
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        )
     
 def update_skill_service(session:Session,group_id:int,param:list[SkillUpdatePatch]):
     try:
@@ -49,4 +53,7 @@ def update_skill_service(session:Session,group_id:int,param:list[SkillUpdatePatc
         return  {"message": "Skills update successfully"}  
     except SQLAlchemyError:
         session.rollback()
-        return False    
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        )  
