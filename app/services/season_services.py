@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from fastapi import HTTPException
+from fastapi import HTTPException,status
 from sqlmodel import Session
 from app.core.enums.status_enum import Status
 from app.filter.season_filter import SeasonFilter
@@ -38,7 +37,7 @@ def create_season_service(session:Session,id_group:int,param:SeasonCreate):
         season=find_season(session,id_group,param.name,year_now)
         if season:
             raise HTTPException(
-                status_code=Status.HTTP_409_CONFLICT,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="Season already exists"
         )
 

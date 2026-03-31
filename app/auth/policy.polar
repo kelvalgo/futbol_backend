@@ -125,5 +125,39 @@ allow(ctx: RequestContext, "update_season", groupf: Group) if
             not group_permissions.has_season(ctx, groupf)
         ); 
 
-    
+#Rules match
+
+allow(ctx: RequestContext, "list_match", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+    (
+        group_permissions.is_member_of_group(ctx, groupf) or
+        group_permissions.is_admin_of_group(ctx, groupf)
+    );
+
+allow(ctx: RequestContext, "create_match", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+        (           
+            group_permissions.is_admin_of_group(ctx, groupf) and 
+            not group_permissions.has_activate_match(ctx, groupf)
+        );
+
+allow(ctx: RequestContext, "update_match",groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+        (           
+            group_permissions.is_admin_of_group(ctx, groupf) and 
+            not group_permissions.has_match(ctx,groupf)
+        ); 
+   
+allow(ctx: RequestContext, "get_list_teams",groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+        (           
+            group_permissions.is_admin_of_group(ctx, groupf) and 
+            not group_permissions.has_activate_match(ctx, groupf)
+        );     
  
+allow(ctx: RequestContext, "list_match_player", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+    (
+        group_permissions.is_member_of_group(ctx, groupf) or
+        group_permissions.is_admin_of_group(ctx, groupf)
+    ); 

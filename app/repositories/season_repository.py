@@ -1,4 +1,5 @@
 from sqlmodel import Session, select
+from app.core.enums.status_enum import Status
 from app.schemas.season import SeasonBase, SeasonCreate, SeasonUpdatePatch
 from app.filter.season_filter import SeasonFilter
 from app.models.season import Season
@@ -32,6 +33,11 @@ def create_season_repositoy(session:Session,id_group:int,param:SeasonBase):
 
 def find_season(session:Session,id_group:int,name:str,year:int):
     template= select(Season).where(name==Season.name,Season.year == year,Season.group_id==id_group)
+    season=session.exec(template).first()
+    return season
+
+def find_season_activate(session:Session,id_group:int,seasonid:int,status:SeasonFilter):
+    template= select(Season).where(Season.is_active==status.disabled,Season.group_id==id_group,Season.id==seasonid)
     season=session.exec(template).first()
     return season
 

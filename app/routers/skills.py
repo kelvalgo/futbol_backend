@@ -51,6 +51,8 @@ async def list_skill(
 
     return users_skill
 
+
+'''
 @router.post("/id_group/{id_group}/internal",
              status_code=status.HTTP_201_CREATED)
 def create_skill(session: sessionDep,
@@ -90,7 +92,7 @@ def create_skill(session: sessionDep,
         )
    
     return  create_skill_service(session,id_group,users_skills)
-    
+'''    
 
 @router.patch("/id_group/{id_group}/internal",
     status_code=status.HTTP_200_OK

@@ -1,4 +1,7 @@
 from datetime import datetime
+from app.core.enums.position_enum import PositionEnum
+from app.schemas.skill import SkillCreate
+from app.services.skill_service import create_skill_service
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlmodel import Session
@@ -96,6 +99,25 @@ def create_users_by_group(
                     )    
     user_gf = UserGroupF(**usergf.model_dump())
     create_relation_user_groupf(session,user_gf)
+
+
+    users_skills = []
+
+    skill = SkillCreate(
+        user_id=user_gf.user_id,
+        position=PositionEnum.GK,
+        spatial_condition=False,
+        gk=0,
+        df=0,
+        mf=0,
+        wf=0
+    )
+
+    users_skills.append(skill)
+
+    create_skill_service(session,id_group,users_skills)
+
+
     session.commit()
     return  {"message": "User created successfully"}
 

@@ -8,14 +8,17 @@ class MatchPlayer(BaseModel):
     # ⚽ action of player
     team:TeamEnum = None
     position:PositionEnum= None
-    matchResult:MatchResult= None
     goals_scored: int =None
     goals_conceded_as_goalkeeper: int= None
 
    
-class MatchPlayerCreate (MatchPlayer):  
+class MatchPlayerCreate (BaseModel):  
     match_id: int = None
     user_id: int = None
+    team:TeamEnum = None
+    position:PositionEnum= None
+    goals_scored: int =None
+    goals_conceded_as_goalkeeper: int= None
 
 class MatchPlayerUpdatePut (BaseModel):  
     id: int
@@ -23,22 +26,27 @@ class MatchPlayerUpdatePut (BaseModel):
     user_id: int
     team:TeamEnum 
     position:PositionEnum
-    matchResult:MatchResult
     goals_scored: int
     goals_conceded_as_goalkeeper: int
 
 class MatchPlayerUpdatePatch (MatchPlayer):  
     id: int 
     match_id: int 
-    user_id: int 
-  
+    user_id: int     
    
 
 
-class MatchPlayerRead(MatchPlayer):
-    id: int = None 
-    match_id: int = None
-    user_id: int = None   
+class MatchPlayerRead(BaseModel):
+    id: int
+    match_id: int 
+    user_id: int
+    username:str
+    team:TeamEnum 
+    position:PositionEnum
+    goals_scored: int
+    goals_conceded_as_goalkeeper: int 
+
+
 
 
 

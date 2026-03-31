@@ -1,14 +1,14 @@
 import random
 import statistics
 from typing import List, Optional
-from app.schemas.team import Jugador, GenerarEquiposResponse, EquipoResponse
+from app.schemas.team import Gamer, TeamGeneratorResponse, EquipoResponse
 
 
 def media_segura(valores: list[float]) -> float:
     return statistics.mean(valores) if valores else 0
 
 
-def generar_equipos(jugadores_input: List[Jugador]) -> GenerarEquiposResponse:
+def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
 
     if len(jugadores_input) < 2:
         raise ValueError("No hay suficientes jugadores para formar equipos")
@@ -111,7 +111,7 @@ def generar_equipos(jugadores_input: List[Jugador]) -> GenerarEquiposResponse:
             nombre=nombre,
             media_estrellas=round(media_segura([j["Estrellas"] for j in equipo]), 2),
             jugadores=[
-                Jugador(
+                Gamer(
                     id_jugador=j["id_jugador"],
                     jugador=j["Jugador"],
                     puntos=j["Puntos"],
@@ -122,11 +122,11 @@ def generar_equipos(jugadores_input: List[Jugador]) -> GenerarEquiposResponse:
                 for j in equipo
             ],
         )
-
-    return GenerarEquiposResponse(
+    '''
+    return TeamGeneratorResponse(
         equipo_rojo=build_equipo("Rojo", equipo_rojo),
         equipo_azul=build_equipo("Azul", equipo_azul),
-        banca=Jugador(
+        banca=Gamer(
             id_jugador=bench["id_jugador"],
             jugador=bench["Jugador"],
             puntos=bench["Puntos"],
@@ -137,3 +137,25 @@ def generar_equipos(jugadores_input: List[Jugador]) -> GenerarEquiposResponse:
         if bench
         else None,
     )
+    '''
+    if isinstance(bench, dict):
+        bench = [bench]
+
+    bancab = [
+        Gamer(
+            id_jugador=j["id_jugador"],
+            jugador=j["Jugador"],
+            puntos=j["Puntos"],
+            estrellas=j["Estrellas"],
+            posicion=j["PosicionJuego"],
+            mayor=j["MayorNorm"] == "si",
+        )
+        for j in (bench or [])
+    ]
+
+    return TeamGeneratorResponse(
+        equipo_rojo=build_equipo("Rojo", equipo_rojo),
+        equipo_azul=build_equipo("Azul", equipo_azul),
+        banca= bancab )
+
+    

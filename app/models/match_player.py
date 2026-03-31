@@ -27,8 +27,7 @@ class MatchPlayer(SQLModel, table=True):
     )
 
     # ⚽ action of player
-    team:TeamEnum = Field(default=None)
-    matchResult:MatchResult= Field(default=None)
+    team:TeamEnum = Field(default=None)    
     position:PositionEnum= Field(default=None)
     goals_scored: int = Field(default=0)
     goals_conceded_as_goalkeeper: int = Field(default=0)

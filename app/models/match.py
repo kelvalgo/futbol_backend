@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from datetime import date
+from app.core.enums.match_status import MatchStatus
 from app.core.enums.status_enum import Status
 from app.core.enums.team_enum import TeamEnum
 from sqlalchemy import Column, ForeignKey
@@ -19,12 +20,14 @@ class Match(SQLModel, table=True):
         )
     )   
 
-    match_date: date
+    match_date: str=Field(nullable=True)
 
-    blue_score: int
-    red_score: int
+    blue_score: int= Field(default=0)
+    red_score: int= Field(default=0)
     win:TeamEnum|None=Field(default=None)
-    is_active: Status = Field(default=Status.active)
+    status_match: MatchStatus = Field(default=MatchStatus.scheduled)
+    team_rating_red:Optional[float]=Field(default=0.0)
+    team_rating_blue:Optional[float]=Field(default=0.0)
 
     season: Optional["Season"] = Relationship(back_populates="matches")
 

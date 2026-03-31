@@ -1,6 +1,8 @@
 from pydantic import BaseModel,Field
 from datetime import date
+from app.core.enums.match_status import MatchStatus
 from app.core.enums.team_enum import TeamEnum
+from typing import Optional
 
 class MatchBase(BaseModel):
 
@@ -9,21 +11,27 @@ class MatchBase(BaseModel):
     red_score: int | None =None
     
 
-class MatchCreate (MatchBase):  
-    season_id: int | None =None
-
-class MatchUpdatePut (BaseModel):  
-    id:int | None =None
-    win:TeamEnum
-    is_active: bool
+class MatchCreate (BaseModel):  
+    season_id: int
     match_date: date
-    blue_score: int
-    red_score: int
 
-class MatchUpdatePatch (MatchBase):  
-    id:int | None =None
-    win:TeamEnum| None = Field(default=None) 
-    is_active: bool | None = Field(default=True) 
+class MatchCreateBD (BaseModel):  
+    season_id: int
+    match_date: str    
+
+
+class MatchUpdatePatch (BaseModel):  
+    match_date: Optional[str]
+    blue_score: Optional[int]
+    red_score: Optional[int]
+    win:Optional["TeamEnum"]
+    status_match: Optional["MatchStatus"]
+
+class MatchUpdatePatchRating (BaseModel):      
+    team_rating_red:Optional[float]
+    team_rating_blue:Optional[float]
+    status_match: Optional["MatchStatus"]
+
 
 class MatchRead(MatchBase):
     id:int | None =None
