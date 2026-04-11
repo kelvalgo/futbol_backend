@@ -1,11 +1,12 @@
 from app.core.enums.match_status import MatchStatus
 from app.filter.match_filter import  MacthSeasonGroupFilter, MatchFilter
 from app.filter.season_filter import SeasonFilter
-from app.repositories.match_player_repository import list_match_player_repository
+from app.models.match_player import MatchPlayer
+from app.repositories.match_player_repository import find_match_player_repository, list_match_player_repository, update_match_player_repository
 from app.repositories.match_repository import create_match_repositoy, find_match, list_match_repository, update_match_repository
 from app.repositories.season_repository import find_season, find_season_activate, list_season_repository
 from app.schemas.match import MatchCreate, MatchCreateBD, MatchUpdatePatch
-from app.schemas.match_player import MatchPlayerRead
+from app.schemas.match_player import MatchPlayerRead, MatchPlayerUpdatePatch
 from app.schemas.season_match import SeasonMatchRead
 from fastapi import APIRouter,Depends,HTTPException,status
 from sqlmodel import Session
@@ -57,3 +58,20 @@ def list_match_player_service(session:Session,group_id:int):
         )
     '''
     return response
+
+
+def update_match_player_service(session:Session,match_player_id:int,match_player_pacth:MatchPlayerUpdatePatch):
+            
+    try:
+        update_match_player_repository(session,match_player_id,match_player_pacth)
+        session.commit()
+        return  {"message": "Match update successfully"}  
+    except SQLAlchemyError:
+        session.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        ) 
+   
+
+     

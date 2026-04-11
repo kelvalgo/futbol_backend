@@ -27,13 +27,35 @@ class GameTableUpdatePut (BaseModel):
     points : int 
     fines: int 
 
-class GameTableUpdatePatch (GameTableBase):  
-    id:int 
+class GameTableUpdatePatch (BaseModel): 
+    user_id: int
+    season_id:int 
+    win:int
+    lose : int
+    tie : int   
+    player_goals_scored: int
+    goalkeeper_goals_conceded: int 
+    stars : float =Field(ge=0, le=5)  
+    points : int 
+    fines: int
 
 class GameTableRead(GameTableBase):
     id:int
     user_id: int
     season_id:int 
+
+class ListGameTable(BaseModel):
+    user_id: int
+    season_id:int 
+    games:int 
+    win:int
+    lose : int
+    tie : int   
+    player_goals_scored: int
+    goalkeeper_goals_conceded: int 
+    stars : float =Field(ge=0, le=5)  
+    points : int 
+    fines: int    
 
 
     

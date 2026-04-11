@@ -73,9 +73,6 @@ def create_user(session: Session, user: User) -> User:
         session.add(user)
         return user
     
-
-
-
 def create_acount(session:Session,new_count:User)->User: 
         
         session.add(new_count)

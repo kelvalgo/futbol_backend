@@ -161,3 +161,9 @@ allow(ctx: RequestContext, "list_match_player", groupf: Group) if
         group_permissions.is_member_of_group(ctx, groupf) or
         group_permissions.is_admin_of_group(ctx, groupf)
     ); 
+
+allow(ctx: RequestContext, "update_match_player", groupf: Group) if
+    group_permissions.is_user_active(ctx) and
+    (
+        group_permissions.is_admin_of_group(ctx, groupf)
+    );

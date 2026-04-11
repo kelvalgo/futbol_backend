@@ -1,3 +1,5 @@
+from http.client import HTTPException
+
 from sqlmodel import Session,select
 from app.core.enums.match_status import MatchStatus
 from app.core.enums.status_enum import Status
@@ -6,28 +8,12 @@ from app.models.match import Match
 from app.models.season import Season
 from app.models.user import User
 from app.models.match_player import MatchPlayer
-from app.schemas.match_player import  MatchPlayerCreate
+from app.schemas.match_player import  MatchPlayerCreate, MatchPlayerUpdatePatch
 from app.models.match_player import MatchPlayer
-
+from fastapi import APIRouter,Depends,HTTPException,status
 
 def list_match_player_repository(session:Session,group_id:int):
-    '''
-    def list_match_player_repository(session:Session,group_id:int,param:MacthSeasonGroupFilter):
     
-        statement = (
-            select(Match,Season.name)
-            .join(Season, Season.id == Match.season_id,)
-            .where(
-                Season.group_id==group_id,
-                Match.id == param.id_match,
-                Match.season_id==param.id_season
-            )
-            .order_by(Match.match_date)
-        )
-        '''  
-    
-    
-
     statement = (
         select(MatchPlayer,User.username)
         .join(User, User.id == MatchPlayer.user_id,)
@@ -65,3 +51,24 @@ def create_match_player_repository(session:Session, players:list[MatchPlayerCrea
         session.rollback()
         raise
     return db_players
+
+def find_match_player_repository(session:Session, id_match_player:int):
+    match_player = session.get(MatchPlayer, id_match_player)
+    return match_player
+
+
+def update_match_player_repository(session:Session,match_player_id:int,match_player_pacth:MatchPlayerUpdatePatch):
+    
+    match_player = find_match_player_repository(session, match_player_id)
+    if not match_player:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Match player not found"
+        )
+
+    update_data = match_player_pacth.model_dump(exclude_unset=True)
+    
+    for field, value in update_data.items():
+            setattr(match_player, field, value)
+
+    return match_player

@@ -1,9 +1,11 @@
-from app.core.enums.match_status import MatchStatus
+from app.core.enums.match_status import MatchStatus,MatchStatusFinished
 from app.filter.match_filter import MacthSeasonGroupFilter, MatchFilter
 from app.filter.season_filter import SeasonFilter
-from app.repositories.match_repository import create_match_repositoy, find_match, list_match_repository, update_match_repository
+from app.repositories.game_table_repository import  update_finish_game_table_repository, update_game_table_repository
+from app.repositories.list_game_table import ListGameTable
+from app.repositories.match_repository import create_match_repositoy, find_match,  list_match_repository, update_match_repository
 from app.repositories.season_repository import find_season, find_season_activate, list_season_repository
-from app.schemas.match import MatchCreate, MatchCreateBD, MatchUpdatePatch
+from app.schemas.match import MatchCreate, MatchCreateBD, MatchUpdateFinishPatch, MatchUpdatePatch
 from app.schemas.season_match import SeasonMatchRead
 from fastapi import APIRouter,Depends,HTTPException,status
 from sqlmodel import Session
@@ -74,6 +76,7 @@ def create_match_service(session:Session,id_group:int,match_in:MatchCreate):
 def update_match_service(session:Session,match_find:MacthSeasonGroupFilter,match_pacth:MatchUpdatePatch):
    
     try:
+            
         update_match_repository(session,match_find,match_pacth)
         session.commit()
         return  {"message": "Match update successfully"}  
@@ -83,5 +86,33 @@ def update_match_service(session:Session,match_find:MacthSeasonGroupFilter,match
             status_code=500,
             detail="Database error"
         ) 
+    
+
+
+def update_match_finished_service(session:Session,match_find:MacthSeasonGroupFilter,match_pacth:MatchUpdateFinishPatch,season_id:int):
+   
+    try:
+        
+        if MatchStatusFinished.finished.value==match_pacth.status_match.value:            
+            
+            list_match_player=ListGameTable()
+
+            match_players=list_match_player.find_match_player_teams_repository(session, match_find.id_match)
+            match_players=list_match_player.find_starts_for_player_repository(session,match_players) 
+            match_players=list_match_player.goalkeeper_goals_conceded_repository(match_players, match_pacth)
+            match_players=list_match_player.list_game_table_user_repository(match_players,match_pacth,season_id)
+            
+            
+            update_finish_game_table_repository(session,match_find.id_season,match_pacth,match_players)        
+            session.commit()
+            return  {"message": "Match update successfully"}  
+    except SQLAlchemyError:
+        session.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="Database error"
+        ) 
+    
+        
     
         

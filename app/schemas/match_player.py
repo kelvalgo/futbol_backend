@@ -29,10 +29,10 @@ class MatchPlayerUpdatePut (BaseModel):
     goals_scored: int
     goals_conceded_as_goalkeeper: int
 
-class MatchPlayerUpdatePatch (MatchPlayer):  
-    id: int 
-    match_id: int 
-    user_id: int     
+class MatchPlayerUpdatePatch (MatchPlayer): 
+    team:TeamEnum = None
+    goals_scored: int =None
+    goals_conceded_as_goalkeeper: int= None
    
 
 
@@ -45,6 +45,16 @@ class MatchPlayerRead(BaseModel):
     position:PositionEnum
     goals_scored: int
     goals_conceded_as_goalkeeper: int 
+
+class MatchPlayerStarts(BaseModel):
+    id: int
+    match_id: int 
+    user_id: int
+    team:TeamEnum 
+    position:PositionEnum
+    goals_scored: int
+    goals_conceded_as_goalkeeper: int 
+    stars : float = None    
 
 
 
