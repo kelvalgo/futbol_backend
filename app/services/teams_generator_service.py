@@ -17,8 +17,7 @@ from fastapi import HTTPException,status
 
 def team_generator_service(session:Session,id_group:int,match_find:MacthSeasonGroupFilter,gamers:GamersRequest):
   
-    gamers_data_skill=find_data_gamers(session,id_group,match_find.id_season,gamers)     
-
+    gamers_data_skill=find_data_gamers(session,id_group,match_find.id_season,gamers) 
 
     try:
         
@@ -32,8 +31,6 @@ def team_generator_service(session:Session,id_group:int,match_find:MacthSeasonGr
                 detail="match in progress"
             )    
 
-
-        
         team_generator= generar_equipos(gamers_data_skill)
 
 

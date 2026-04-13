@@ -28,38 +28,56 @@ def update_game_table_repository(session:Session,season_id:int,match_pacth:Match
         return db_game_table
 
 def update_finish_game_table_repository(session:Session,season_id:int,match_pacth:MatchUpdatePatch,list_players:list[ListGameTable]):
-        print("Entra a update_finish_game_table_repository***********")
+        
         db_game_table = session.exec(
             select(GameTable).join(Season,Season.id == GameTable.season_id).where(
                 GameTable.season_id == season_id
             )
-        ).first()
-
-        print(f"supera consulta db_game_table {db_game_table}***********")
+        ).all()
+        
 
         ####ojo solo es este if el que estas tocando lo demas queda igual
         if  db_game_table is None:
-            print(f"entra al if{db_game_table}***********")
-            game_table:list[GameTable] = []
             
-            for list_player in list_players:
-                new_row = GameTable(
-                    user_id=list_player["user_id"],
-                    season_id=season_id,
-                    games=list_player.get("games", 0),
-                    win=list_player.get("win", 0),
-                    lose=list_player.get("lose", 0),
-                    tie=list_player.get("tie", 0),
-                    player_goals_scored=list_player.get("player_goals_scored", 0),
-                    goalkeeper_goals_conceded=list_player.get("goalkeeper_goals_conceded", 0),
-                    stars=list_player.get("stars", 0),
-                    points=list_player.get("points", 0),
-                    fines=list_player.get("fines", 0)
-                )
-
-                game_table.append(new_row)           
+                     
+            game_table=change_listGameTable_to_gameTable(list_players,season_id)
 
             session.add_all(game_table)   
+        else:
+               
+                game_table_players=change_listGameTable_to_gameTable(list_players,season_id)
+
+                    # 🔥 MAPEAR BD POR user_id
+                db_map = {g.user_id: g for g in db_game_table}
+
+                # 🔥 CAMPOS A SUMAR
+                fields = [
+                    "games",
+                    "win",
+                    "lose",
+                    "tie",
+                    "player_goals_scored",
+                    "goalkeeper_goals_conceded",
+                    "points"
+                ]
+
+                for player in game_table_players:
+                    db_row = db_map.get(player.user_id)
+
+                    if db_row:
+                        # 🔥 SUMAR CAMPOS
+                        for field in fields:
+                            setattr(
+                                db_row,
+                                field,
+                                getattr(db_row, field) + getattr(player, field, 0)
+                            )
+                    else:
+                        # 🔥 SI NO EXISTE → INSERTAR
+                        session.add(player)
+
+                session.commit()  
+                  
     
                        
 
@@ -72,3 +90,26 @@ def update_finish_game_table_repository(session:Session,season_id:int,match_pact
 
         return db_game_table '''
 pass
+
+def change_listGameTable_to_gameTable(list_players:list[ListGameTable],season_id:int)-> list[GameTable]:
+    print("change_listGameTable_to_gameTable*************************************************")
+    game_table:list[GameTable] = []
+            
+    for list_player in list_players:
+        new_row = GameTable(
+            user_id=list_player["user_id"],
+            season_id=season_id,
+            games=list_player.get("games", 0),
+            win=list_player.get("win", 0),
+            lose=list_player.get("lose", 0),
+            tie=list_player.get("tie", 0),
+            player_goals_scored=list_player.get("player_goals_scored", 0),
+            goalkeeper_goals_conceded=list_player.get("goalkeeper_goals_conceded", 0),
+            stars=list_player.get("stars", 0),
+            points=list_player.get("points", 0),
+            fines=list_player.get("fines", 0)
+        )
+
+        game_table.append(new_row)           
+
+    return game_table

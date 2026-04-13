@@ -1,3 +1,5 @@
+from app.core.enums.position_enum import PositionEnum
+from fastapi import HTTPException 
 import random
 import statistics
 from typing import List, Optional
@@ -11,7 +13,10 @@ def media_segura(valores: list[float]) -> float:
 def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
 
     if len(jugadores_input) < 2:
-        raise ValueError("No hay suficientes jugadores para formar equipos")
+        raise HTTPException(
+        status_code=400,
+        detail="Se necesitan al menos 2 jugadores para generar equipos"
+    )
 
     # Normalizar a dict (manteniendo tu lógica original)
     jugadores = []
@@ -45,7 +50,10 @@ def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
                 break
 
         if bench is None:
-            bench = candidatos[0]
+           candidatos_no_gk = [c for c in candidatos if c["PosicionJuegoNorm"] != "goalkeeper"]
+           bench = candidatos_no_gk[0] if candidatos_no_gk else candidatos[0]
+
+           
 
         jugadores.remove(bench)
 
@@ -56,7 +64,12 @@ def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
 
     arqueros = [j for j in jugadores if j["PosicionJuegoNorm"] == "goalkeeper"]
     if len(arqueros) < 2:
-        raise ValueError("Se requieren dos arqueros")
+        
+        raise HTTPException(
+        status_code=400,
+        detail="Se requieren dos arqueros"
+    )
+       
 
     arquero_rojo = random.choice(arqueros)
     arquero_azul = random.choice([a for a in arqueros if a != arquero_rojo])
@@ -122,22 +135,7 @@ def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
                 for j in equipo
             ],
         )
-    '''
-    return TeamGeneratorResponse(
-        equipo_rojo=build_equipo("Rojo", equipo_rojo),
-        equipo_azul=build_equipo("Azul", equipo_azul),
-        banca=Gamer(
-            id_jugador=bench["id_jugador"],
-            jugador=bench["Jugador"],
-            puntos=bench["Puntos"],
-            estrellas=bench["Estrellas"],
-            posicion=bench["PosicionJuego"],
-            mayor=bench["MayorNorm"] == "si",
-        )
-        if bench
-        else None,
-    )
-    '''
+
     if isinstance(bench, dict):
         bench = [bench]
 
@@ -152,7 +150,7 @@ def generar_equipos(jugadores_input: List[Gamer]) -> TeamGeneratorResponse:
         )
         for j in (bench or [])
     ]
-
+    
     return TeamGeneratorResponse(
         equipo_rojo=build_equipo("Rojo", equipo_rojo),
         equipo_azul=build_equipo("Azul", equipo_azul),
