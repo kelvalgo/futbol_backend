@@ -1,6 +1,6 @@
 from app.auth.context import RequestContext, RequestContextMacth
 from app.auth.oso import get_oso
-from app.filter.match_filter import MacthSeasonGroupFilter, MatchFilter
+from app.filter.match_filter import MacthSeasonGroupFilter, MatchFilter, MatchFilterRead
 from oso import Oso
 from app.core.enums.auth_results import AuthResult
 from app.filter.group_filter import Group
@@ -22,7 +22,7 @@ router=APIRouter(prefix="/match", tags=["Match"])
             status_code=status.HTTP_200_OK)
 async def list_match_table( session: sessionDep,
     id_group:int,
-    param:MatchFilter= Depends(),
+    param:MatchFilterRead= Depends(),
     current_user: User = Depends(get_current_user),
     oso:Oso=Depends(get_oso)
 ):
