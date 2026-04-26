@@ -5,6 +5,7 @@ from app.db.db import sessionDep
 from app.core.security.token_jwt import decode_token
 from app.models.user import User
 from app.core.enums.status_enum import Status
+from fastapi import Request
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
@@ -12,10 +13,11 @@ def get_user(username:str,db: Session):
     statement = select(User).where(User.username == username)
     return db.exec(statement).first()
 
-def get_current_user(   db: sessionDep,
+def get_current_user( request: Request,  db: sessionDep,
     token: str = Depends(oauth2_scheme)) -> User:
     payload = decode_token(token)
     username = payload.get("sub")
+    
 
     if not username:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -28,7 +30,7 @@ def get_current_user(   db: sessionDep,
         status_code=403,
         detail="User inactive"
         )
-
+    request.state.user = user if user else None
     return user
 
 

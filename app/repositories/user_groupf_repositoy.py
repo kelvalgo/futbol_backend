@@ -1,8 +1,6 @@
 from sqlmodel import Session
 from app.models.user_groupf import UserGroupF
 from sqlmodel import Session,select
-from app.models.group_friends import GroupFriends
-from app.models.user import User
 from app.models.user_groupf import UserGroupF
 
 
@@ -31,5 +29,17 @@ def update_usergroupf(session,data: tuple,param):
 
         return db_userg
          
+
+def get_my_membership_repository(session:Session,group_id:int,user_id:int):
+
+    membership = session.exec(
+        select(UserGroupF).where(
+            UserGroupF.user_id == user_id,
+            UserGroupF.group_id == group_id
+        )
+    ).first()
+  
+        
+    return membership  
    
 

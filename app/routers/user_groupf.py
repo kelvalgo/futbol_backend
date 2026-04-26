@@ -1,5 +1,5 @@
 from fastapi import APIRouter,Depends,HTTPException,status
-from app.services.user_groupf_service import update_usergroupf_service
+from app.services.user_groupf_service import get_my_membership_service, update_usergroupf_service
 from app.schemas.user_groupf import UserGroupfUpdatePatch
 from app.filter.group_filter import Group
 from app.core.enums.auth_results import AuthResult
@@ -60,4 +60,19 @@ def update_usergroupf(session: sessionDep,
             detail=AuthResult.FORBIDDEN.value
         )
     data=(group_id,user_id)
-    return update_usergroupf_service(session,data,users_groupf)
+    return update_usergroupf_service(session,data,users_groupf)    
+
+
+@router.get("/groups/{group_id}/me")
+def get_my_membership(
+    group_id: int,
+    session: sessionDep,
+    current_user: User = Depends(get_current_user),
+):
+    
+    membership =get_my_membership_service(session,group_id,current_user.id)
+    print(f"membership router: {membership}") 
+   
+    return {
+        "role": membership.rol.value
+    }

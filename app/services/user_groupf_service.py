@@ -3,7 +3,7 @@ from app.filter.user_group_filter import UserGroupFilter
 from app.core.enums.rol import Rol
 from app.models.user_groupf import UserGroupF
 from sqlmodel import Session
-from app.repositories.user_groupf_repositoy import create_user_groupf,update_usergroupf
+from app.repositories.user_groupf_repositoy import create_user_groupf, get_my_membership_repository,update_usergroupf
 from app.schemas.user_groupf import UserGroupfCreate, UserGroupfUpdatePatch
 from app.core.enums.rol import Rol
 from sqlalchemy.exc import SQLAlchemyError
@@ -46,4 +46,20 @@ def  update_usergroupf_service(session:Session,data: tuple,param:UserGroupfUpdat
             status_code=500,
             detail="Database error"
         ) 
+    
+
+
+def get_my_membership_service(session:Session,group_id:int,user_id:int):
+
+    membership =get_my_membership_repository(session,group_id,user_id)
+    print(f"membership: {membership}")
+
+    if not membership:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not in group"
+        )
+    print(f"membership service: {membership}")    
+    return membership
+
  

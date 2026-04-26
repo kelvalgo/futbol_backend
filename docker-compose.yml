@@ -1,6 +1,13 @@
 version: "3.9"
 
 services:
+
+  redis:
+    image: redis:7
+    container_name: futbol_redis
+    ports:
+      - "6379:6379"
+    restart: always
   db:
     image: postgres:16
     container_name: futbot_postgres
@@ -14,7 +21,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d futbot"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,6 +34,8 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    env_file:
+    - .env  
     environment:
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/futbot

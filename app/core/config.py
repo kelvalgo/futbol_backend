@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     PERIODING_DONATION:int
     LIMIT_GROUPS:int
+    REDIS_URL: str
 
     class Config:
         env_file = ".env"

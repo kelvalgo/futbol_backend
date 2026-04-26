@@ -33,7 +33,7 @@ if __name__ == "__main__":
     print(f"token generated: \n {token} \n")
 
     try:
-       decoded= decode_token(token)
+       decoded= decode_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzc3MjQxNzEwfQ.rpz1dESWoEZ8GrmPMlEcOIeJzQkuG4_rlPk50paFeC8")
        print(f"token decoded: \n {decoded} \n")
     except Exception as e:
         raise Exception(str(e))   
